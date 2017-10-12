@@ -8,29 +8,37 @@ module ManageIQ::Providers
       @connection ||= manager.connect
     end
 
-    def feeds
-      connection.inventory.list_feeds
+    # def feeds
+    #  connection.inventory.list_feeds
+    # end
+
+    def oss
+      resources_for('Operating System')
     end
 
-    def eaps(feed)
-      resources_for(feed, 'WildFly Server')
+    def agents
+      resources_for('Hawkular Wildfly Agent')
     end
 
-    def domains(feed)
-      resources_for(feed, 'Domain Host')
+    def eaps
+      resources_for('WildFly Server')
+    end
+
+    def domains
+      resources_for('Domain Host')
         .select { |host| host.properties['Is Domain Controller'] == 'true' }
     end
 
-    def server_groups(feed)
-      resources_for(feed, 'Domain Server Group')
+    def server_groups
+      resources_for('Domain Server Group')
     end
 
-    def domain_servers(feed)
-      resources_for(feed, 'Domain WildFly Server')
+    def domain_servers
+      resources_for('Domain WildFly Server')
     end
 
-    def child_resources(resource_path, recursive = false)
-      manager.child_resources(resource_path, recursive)
+    def child_resources(resource_id, recursive = false)
+      manager.child_resources(resource_id, recursive)
     end
 
     def machine_id(feed)
@@ -78,12 +86,8 @@ module ManageIQ::Providers
         .find { |item| item.id.include? 'Operating System' }
     end
 
-    def resources_for(feed, resource_type_path)
-      path = ::Hawkular::Inventory::CanonicalPath.new(
-        :feed_id          => hawk_escape_id(feed),
-        :resource_type_id => hawk_escape_id(resource_type_path)
-      )
-      connection.inventory.list_resources_for_type(path.to_s, :fetch_properties => true)
+    def resources_for(resource_type)
+      connection.inventory_v4.resources_for_type(resource_type)
     end
   end
 end
