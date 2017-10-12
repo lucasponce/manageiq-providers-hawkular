@@ -125,7 +125,7 @@ module ManageIQ::Providers
       end
     end
 
-    def child_resources(resource_path, recursive = false)
+    def child_resources(resource_id, recursive = false)
       with_provider_connection do |connection|
         connection.inventory.list_child_resources(resource_path, recursive)
       end

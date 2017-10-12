@@ -6,46 +6,51 @@ module ManageIQ::Providers
       def initialize
         super
         @data_index = {}
+        @agents = {}
+        @oss = {}
       end
 
       def parse
         # the order of the method calls is important here, because they make use of @data_index
+        fetch_oss
+        fetch_agents
         fetch_middleware_servers
-        fetch_domains_with_servers
-        fetch_server_entities
-        fetch_availability
+        # fetch_domains_with_servers
+        # fetch_server_entities
+        # fetch_availability
+      end
+
+      def fetch_oss
+        collector.oss.each do |os|
+          @oss[os.feed] = os
+        end
+      end
+
+      def fetch_agents
+        collector.agents.each do |agent|
+          @agents[agent.feed] = agent
+        end
       end
 
       def fetch_middleware_servers
-        collector.feeds.each do |feed|
-          collector.eaps(feed).each do |eap|
-            server = persister.middleware_servers.find_or_build(eap.path)
-            parse_middleware_server(eap, server)
-
-            # if immutable or in container flag is not set, check also the agent resource
-            if server.properties['Immutable'].nil? || server.properties['In Container'].nil?
-              agent_resource_id = 'Local%20JMX~org.hawkular:type%3dhawkular-javaagent'
-              feed_id = ::Hawkular::Inventory::CanonicalPath.parse(eap.path).feed_id
-              agent_resource_path = ::Hawkular::Inventory::CanonicalPath.new(:feed_id      => feed_id,
-                                                                             :resource_ids => [agent_resource_id])
-              agent_config = collector.config_data_for_resource(agent_resource_path.to_s)
-              ['Immutable', 'In Container'].each do |feature|
-                if agent_config.try(:[], 'value').try(:[], feature) == 'true'
-                  server.properties[feature] = 'true'
-                end
-              end
+        collector.eaps.each do |eap|
+          server = persister.middleware_servers.find_or_build(eap.id)
+          parse_middleware_server(eap, server)
+          agent = @agents[eap.feed]
+          ['Immutable', 'In Container'].each do |feature|
+            if agent.properties.try(:[], 'value').try(:[], feature) == 'true'
+              server.properties[feature] = 'true'
             end
-
-            if server.properties['In Container'] == 'true'
-              container_id = collector.container_id(eap.feed)
-              if container_id
-                backing_ref = 'docker://' + container_id
-                container = Container.find_by(:backing_ref => backing_ref)
-                set_lives_on(server, container) if container
-              end
-            else
-              associate_with_vm(server, eap.feed)
+          end
+          if server.properties['In Container'] == 'true'
+            container_id = collector.container_id(eap.feed)['Container Id']
+            if container_id
+              backing_ref = 'docker://' + container_id
+              container = Container.find_by(:backing_ref => backing_ref)
+              set_lives_on(server, container) if container
             end
+          else
+            associate_with_vm(server, eap.feed)
           end
         end
       end
@@ -56,6 +61,11 @@ module ManageIQ::Providers
       end
 
       def fetch_domains_with_servers
+        collector.domains.each do |domain|
+          parsed_domain = persister.middleware_domains.find_or_build(domain.id)
+          parse_middleware_domain(domain, parsed_domain)
+        end
+
         collector.feeds.each do |feed|
           collector.domains(feed).each do |domain|
             parsed_domain = persister.middleware_domains.find_or_build(domain.path)
@@ -317,10 +327,10 @@ module ManageIQ::Providers
         end
       end
 
-      def parse_middleware_domain(feed, domain, inventory_object)
+      def parse_middleware_domain(domain, inventory_object)
         parse_base_item(domain, inventory_object)
-        inventory_object.name = parse_domain_name(feed)
-        inventory_object.type_path = domain.type_path
+        inventory_object.name = domain.name
+        inventory_object.type_path = domain.type.id
       end
 
       def parse_middleware_server_group(group, inventory_object)
@@ -332,7 +342,7 @@ module ManageIQ::Providers
         )
       end
 
-      def parse_middleware_server(eap, inventory_object, domain = false, name = nil)
+      def parse_middleware_server(eap, inventory_object, domain = false)
         parse_base_item(eap, inventory_object)
 
         not_started = domain && eap.properties['Server State'] == 'STOPPED'
@@ -342,8 +352,8 @@ module ManageIQ::Providers
         end
 
         attributes = {
-          :name      => name || parse_standalone_server_name(eap.id),
-          :type_path => eap.type_path,
+          :name      => eap.name,
+          :type_path => eap.type.id,
           :hostname  => hostname,
           :product   => product
         }
@@ -360,7 +370,7 @@ module ManageIQ::Providers
 
       def associate_with_vm(server, feed)
         # Add the association to vm instance if there is any
-        machine_id = collector.machine_id(feed)
+        machine_id = @oss[feed].properties['Machine Id']
         host_instance = find_host_by_bios_uuid(machine_id) ||
                         find_host_by_bios_uuid(alternate_machine_id(machine_id)) ||
                         find_host_by_bios_uuid(dashed_machine_id(machine_id))
@@ -370,32 +380,11 @@ module ManageIQ::Providers
       private
 
       def parse_base_item(item, inventory_object)
-        inventory_object.ems_ref = item.path
         inventory_object.nativeid = item.id
 
         [:properties, :feed].each do |field|
           inventory_object[field] = item.send(field) if item.respond_to?(field)
         end
-      end
-
-      def parse_deployment_name(name)
-        name.sub(/^.*deployment=/, '')
-      end
-
-      def parse_server_group_name(name)
-        name.sub(/^Domain Server Group \[/, '').chomp(']')
-      end
-
-      def parse_domain_server_name(name)
-        name.sub(%r{^.*\/server=}, '')
-      end
-
-      def parse_domain_name(name)
-        name.sub(/^[^\.]+\./, '')
-      end
-
-      def parse_standalone_server_name(name)
-        name.sub(/~~$/, '').sub(/^.*?~/, '')
       end
     end
   end
