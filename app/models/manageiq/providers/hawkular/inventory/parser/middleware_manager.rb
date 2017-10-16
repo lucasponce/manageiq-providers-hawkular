@@ -15,7 +15,7 @@ module ManageIQ::Providers
         fetch_oss
         fetch_agents
         fetch_middleware_servers
-        # fetch_domains_with_servers
+        fetch_domains_with_servers
         # fetch_server_entities
         # fetch_availability
       end
@@ -61,30 +61,25 @@ module ManageIQ::Providers
       end
 
       def fetch_domains_with_servers
-        collector.domains.each do |domain|
-          parsed_domain = persister.middleware_domains.find_or_build(domain.id)
-          parse_middleware_domain(domain, parsed_domain)
-        end
-
-        collector.feeds.each do |feed|
-          collector.domains(feed).each do |domain|
-            parsed_domain = persister.middleware_domains.find_or_build(domain.path)
-            parse_middleware_domain(feed, domain, parsed_domain)
+        collector.host_controllers.each do |host_controller|
+          host_controller = collector.resource_tree(host_controller)
+          collector.domains(host_controller).each do |domain|
+            parsed_domain = persister.middleware_domains.find_or_build(domain.id)
+            parse_middleware_domain(domain, parsed_domain)
 
             # add the server groups to the domain
-            fetch_server_groups(feed, parsed_domain)
+            fetch_server_groups(parsed_domain, host_controller)
 
             # now it's safe to fetch the domain servers (it assumes the server groups to be already fetched)
-            fetch_domain_servers(feed)
+            fetch_domain_servers(host_controller)
           end
         end
       end
 
-      def fetch_server_groups(feed, parsed_domain)
-        collector.server_groups(feed).map do |group|
-          parsed_group = persister.middleware_server_groups.find_or_build(group.path)
+      def fetch_server_groups(parsed_domain, host_controller)
+        collector.server_groups(host_controller).map do |group|
+          parsed_group = persister.middleware_server_groups.find_or_build(group.id)
           parse_middleware_server_group(group, parsed_group)
-
           # TODO: remove this index. Two options for this: 1) try to find or build the ems_ref
           # of the server group. 2) add `find_by` methods to InventoryCollection class. Once this
           # is removed, the order in #parse method will no longer be needed. For now, at least
@@ -95,14 +90,16 @@ module ManageIQ::Providers
         end
       end
 
-      def fetch_domain_servers(feed)
-        collector.domain_servers(feed).each do |domain_server|
+      def fetch_domain_servers(host_controller)
+        byebug
+        collector.domain_servers(host_controller).each do |domain_server|
+          byebug
           server_name = parse_domain_server_name(domain_server.id)
 
-          server = persister.middleware_servers.find_or_build(domain_server.path)
+          server = persister.middleware_servers.find_or_build(domain_server.id)
           parse_middleware_server(domain_server, server, true, server_name)
 
-          associate_with_vm(server, feed)
+          associate_with_vm(server, server.feed)
 
           # Add the association to server group. The information about what server is in which server group is under
           # the server-config resource's configuration
@@ -174,7 +171,7 @@ module ManageIQ::Providers
         'ManageIQ::Providers::Redhat::InfraManager::Vm'
       end
 
-      def fetch_server_entities
+      def fetch_server_entities # use tree
         persister.middleware_servers.each do |eap|
           collector.child_resources(eap.ems_ref, true).map do |child|
             next unless child.type_path.end_with?('Deployment', 'Datasource', 'JMS%20Topic', 'JMS%20Queue')
@@ -336,8 +333,8 @@ module ManageIQ::Providers
       def parse_middleware_server_group(group, inventory_object)
         parse_base_item(group, inventory_object)
         inventory_object.assign_attributes(
-          :name      => parse_server_group_name(group.name),
-          :type_path => group.type_path,
+          :name      => group.name,
+          :type_path => group.type.id,
           :profile   => group.properties['Profile']
         )
       end

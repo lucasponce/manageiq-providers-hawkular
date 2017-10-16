@@ -12,29 +12,37 @@ module ManageIQ::Providers
     #  connection.inventory.list_feeds
     # end
 
+    def resource_tree(resource)
+      connection.inventory_v4.resource_tree(resource.id)
+    end
+
     def oss
-      resources_for('Operating System')
+      resources_for('Platform_Operating System')
     end
 
     def agents
-      resources_for('Hawkular Wildfly Agent')
+      resources_for('Hawkular WildFly Agent')
     end
 
     def eaps
       resources_for('WildFly Server')
     end
 
-    def domains
-      resources_for('Domain Host')
-        .select { |host| host.properties['Is Domain Controller'] == 'true' }
+    def host_controllers
+      resources_for('Host Controller')
     end
 
-    def server_groups
-      resources_for('Domain Server Group')
+    def domains(host_controller)
+      host_controller.children_by_type('Domain Host')
+        .select { true } #|host| host.properties['Is Domain Controller'] == 'true' }
     end
 
-    def domain_servers
-      resources_for('Domain WildFly Server')
+    def server_groups(host_controller)
+      host_controller.children_by_type('Domain Server Group')
+    end
+
+    def domain_servers(host_controller)
+      host_controller.children_by_type('Domain WildFly Server')
     end
 
     def child_resources(resource_id, recursive = false)
