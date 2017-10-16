@@ -36,11 +36,9 @@ module ManageIQ::Providers
         collector.eaps.each do |eap|
           server = persister.middleware_servers.find_or_build(eap.id)
           parse_middleware_server(eap, server)
-          agent = @agents[eap.feed]
+          agent = @agents.fetch(eap.feed)
           ['Immutable', 'In Container'].each do |feature|
-            if agent.properties.try(:[], 'value').try(:[], feature) == 'true'
-              server.properties[feature] = 'true'
-            end
+            server.properties[feature] = 'true' if agent.config[feature] == true
           end
           if server.properties['In Container'] == 'true'
             container_id = collector.container_id(eap.feed)['Container Id']
@@ -319,17 +317,17 @@ module ManageIQ::Providers
         inventory_object.assign_attributes(
           :name      => group.name,
           :type_path => group.type.id,
-          :profile   => group.properties['Profile']
+          :profile   => group.config['Profile']
         )
       end
 
       def parse_middleware_server(eap, inventory_object, domain = false)
         parse_base_item(eap, inventory_object)
 
-        not_started = domain && eap.properties['Server State'] == 'STOPPED'
+        not_started = domain && eap.config['Server State'] == 'STOPPED'
 
         hostname, product = ['Hostname', 'Product Name'].map do |x|
-          not_started && eap.properties[x].nil? ? _('not yet available') : eap.properties[x]
+          not_started && eap.config[x].nil? ? _('not yet available') : eap.config[x]
         end
 
         attributes = {
@@ -351,7 +349,7 @@ module ManageIQ::Providers
 
       def associate_with_vm(server, feed)
         # Add the association to vm instance if there is any
-        machine_id = @oss[feed].properties['Machine Id']
+        machine_id = @oss[feed].config['Machine Id']
         host_instance = find_host_by_bios_uuid(machine_id) ||
                         find_host_by_bios_uuid(alternate_machine_id(machine_id)) ||
                         find_host_by_bios_uuid(dashed_machine_id(machine_id))
