@@ -16,7 +16,7 @@ module ManageIQ::Providers
         fetch_agents
         fetch_middleware_servers
         fetch_domains_with_servers
-        # fetch_server_entities
+        fetch_server_entities
         # fetch_availability
       end
 
@@ -62,7 +62,7 @@ module ManageIQ::Providers
 
       def fetch_domains_with_servers
         collector.host_controllers.each do |host_controller|
-          host_controller = collector.resource_tree(host_controller)
+          host_controller = collector.resource_tree(host_controller.id)
           collector.domains(host_controller).each do |domain|
             parsed_domain = persister.middleware_domains.find_or_build(domain.id)
             parse_middleware_domain(domain, parsed_domain)
@@ -91,21 +91,15 @@ module ManageIQ::Providers
       end
 
       def fetch_domain_servers(host_controller)
-        byebug
         collector.domain_servers(host_controller).each do |domain_server|
-          byebug
-          server_name = parse_domain_server_name(domain_server.id)
-
           server = persister.middleware_servers.find_or_build(domain_server.id)
-          parse_middleware_server(domain_server, server, true, server_name)
+          parse_middleware_server(domain_server, server, true)
 
           associate_with_vm(server, server.feed)
 
           # Add the association to server group. The information about what server is in which server group is under
           # the server-config resource's configuration
-          config_path = domain_server.path.to_s.sub(/%2Fserver%3D/, '%2Fserver-config%3D')
-          config = collector.config_data_for_resource(config_path)
-          server_group_name = config['value']['Server Group']
+          server_group_name = domain_server.config['Server Group']
           server_group = @data_index.fetch_path(:middleware_server_groups, :by_name, server_group_name)
           server.middleware_server_group = persister.middleware_server_groups.lazy_find(server_group[:ems_ref])
         end
@@ -171,12 +165,12 @@ module ManageIQ::Providers
         'ManageIQ::Providers::Redhat::InfraManager::Vm'
       end
 
-      def fetch_server_entities # use tree
+      def fetch_server_entities
         persister.middleware_servers.each do |eap|
-          collector.child_resources(eap.ems_ref, true).map do |child|
-            next unless child.type_path.end_with?('Deployment', 'Datasource', 'JMS%20Topic', 'JMS%20Queue')
-            server = persister.middleware_servers.find(eap.ems_ref)
-            process_server_entity(server, child)
+          eap_tree = collector.resource_tree(eap.ems_ref)
+          eap_tree.children(true).each do |child|
+            next unless ['Deployment', 'Datasource', 'JMS Queue', 'JMS Topic'].include? child.type.id
+            process_server_entity(eap, child)
           end
         end
       end
@@ -256,24 +250,18 @@ module ManageIQ::Providers
       end
 
       def process_entity_with_config(server, entity, inventory_object, continuation)
-        entity_id = hawk_escape_id entity.id
-        server_path = ::Hawkular::Inventory::CanonicalPath.parse(server[:ems_ref])
-        resource_ids = server_path.resource_ids << entity_id
-        resource_path = ::Hawkular::Inventory::CanonicalPath.new(:feed_id      => server_path.feed_id,
-                                                                 :resource_ids => resource_ids)
-        config = collector.config_data_for_resource(resource_path.to_s)
-        send(continuation, entity, inventory_object, config)
+        send(continuation, entity, inventory_object, entity.config)
       end
 
       def process_server_entity(server, entity)
-        if entity.type_path.end_with?('Deployment')
-          inventory_object = persister.middleware_deployments.find_or_build(entity.path)
+        if entity.type.id == 'Deployment'
+          inventory_object = persister.middleware_deployments.find_or_build(entity.id)
           parse_deployment(entity, inventory_object)
-        elsif entity.type_path.end_with?('Datasource')
-          inventory_object = persister.middleware_datasources.find_or_build(entity.path)
+        elsif entity.type.id == 'Datasource'
+          inventory_object = persister.middleware_datasources.find_or_build(entity.id)
           process_entity_with_config(server, entity, inventory_object, :parse_datasource)
         else
-          inventory_object = persister.middleware_messagings.find_or_build(entity.path)
+          inventory_object = persister.middleware_messagings.find_or_build(entity.id)
           process_entity_with_config(server, entity, inventory_object, :parse_messaging)
         end
 
@@ -300,28 +288,24 @@ module ManageIQ::Providers
 
       def parse_deployment(deployment, inventory_object)
         parse_base_item(deployment, inventory_object)
-        inventory_object.name = parse_deployment_name(deployment.id)
+        inventory_object.name = deployment.name
       end
 
       def parse_messaging(messaging, inventory_object, config)
         parse_base_item(messaging, inventory_object)
         inventory_object.name = messaging.name
 
-        type_path = ::Hawkular::Inventory::CanonicalPath.parse(messaging.type_path)
-        inventory_object.messaging_type = URI.decode(type_path.resource_type_id)
+        inventory_object.messaging_type = messaging.type.id
+        inventory_object.properties = config
 
-        if !config.empty? && !config['value'].empty? && config['value'].respond_to?(:except)
-          inventory_object.properties = config['value'].except('Username', 'Password')
-        end
+        inventory_object.properties = config.except('Username', 'Password')
       end
 
       def parse_datasource(datasource, inventory_object, config)
         parse_base_item(datasource, inventory_object)
         inventory_object.name = datasource.name
 
-        if !config.empty? && !config['value'].empty? && config['value'].respond_to?(:except)
-          inventory_object.properties = config['value'].except('Username', 'Password')
-        end
+        inventory_object.properties = config.except('Username', 'Password')
       end
 
       def parse_middleware_domain(domain, inventory_object)
