@@ -12,8 +12,8 @@ module ManageIQ::Providers
     #  connection.inventory.list_feeds
     # end
 
-    def resource_tree(resource)
-      connection.inventory_v4.resource_tree(resource.id)
+    def resource_tree(resource_id)
+      connection.inventory_v4.resource_tree(resource_id)
     end
 
     def oss
@@ -42,7 +42,7 @@ module ManageIQ::Providers
     end
 
     def domain_servers(host_controller)
-      host_controller.children_by_type('Domain WildFly Server')
+      host_controller.children_by_type('Domain WildFly Server', true)
     end
 
     def child_resources(resource_id, recursive = false)
