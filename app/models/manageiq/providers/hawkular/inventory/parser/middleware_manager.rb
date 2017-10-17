@@ -6,29 +6,27 @@ module ManageIQ::Providers
       def initialize
         super
         @data_index = {}
-        @agents = {}
-        @oss = {}
       end
 
       def parse
         # the order of the method calls is important here, because they make use of @data_index
-        fetch_oss
-        fetch_agents
+        fetch_oss_configuration
+        fetch_agents_configuration
         fetch_middleware_servers
         fetch_domains_with_servers
         fetch_server_entities
-        # fetch_availability
+        fetch_availability
       end
 
-      def fetch_oss
+      def fetch_oss_configuration
         collector.oss.each do |os|
-          @oss[os.feed] = os
+          @data_index.store_path(:middleware_os_config, :by_feed, os.feed, os.config)
         end
       end
 
-      def fetch_agents
+      def fetch_agents_configuration
         collector.agents.each do |agent|
-          @agents[agent.feed] = agent
+          @data_index.store_path(:middleware_agent_config, :by_feed, agent.feed, agent.config)
         end
       end
 
@@ -36,9 +34,9 @@ module ManageIQ::Providers
         collector.eaps.each do |eap|
           server = persister.middleware_servers.find_or_build(eap.id)
           parse_middleware_server(eap, server)
-          agent = @agents.fetch(eap.feed)
+          agent_config = @data_index.fetch_path(:middleware_agent_config, :by_feed, eap.feed)
           ['Immutable', 'In Container'].each do |feature|
-            server.properties[feature] = 'true' if agent.config[feature] == true
+            server.properties[feature] = 'true' if agent_config[feature] == true
           end
           if server.properties['In Container'] == 'true'
             container_id = collector.container_id(eap.feed)['Container Id']
@@ -98,8 +96,10 @@ module ManageIQ::Providers
           # Add the association to server group. The information about what server is in which server group is under
           # the server-config resource's configuration
           server_group_name = domain_server.config['Server Group']
-          server_group = @data_index.fetch_path(:middleware_server_groups, :by_name, server_group_name)
-          server.middleware_server_group = persister.middleware_server_groups.lazy_find(server_group[:ems_ref])
+          unless server_group_name.nil?
+            server_group = @data_index.fetch_path(:middleware_server_groups, :by_name, server_group_name)
+            server.middleware_server_group = persister.middleware_server_groups.lazy_find(server_group[:ems_ref])
+          end
         end
       end
 
@@ -349,7 +349,7 @@ module ManageIQ::Providers
 
       def associate_with_vm(server, feed)
         # Add the association to vm instance if there is any
-        machine_id = @oss[feed].config['Machine Id']
+        machine_id = @data_index.fetch_path(:middleware_os_config, :by_feed, feed)['Machine Id']
         host_instance = find_host_by_bios_uuid(machine_id) ||
                         find_host_by_bios_uuid(alternate_machine_id(machine_id)) ||
                         find_host_by_bios_uuid(dashed_machine_id(machine_id))
