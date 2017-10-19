@@ -9,7 +9,7 @@ module ManageIQ::Providers
     end
 
     def resource_tree(resource_id)
-      connection.inventory_v4.resource_tree(resource_id)
+      connection.inventory.resource_tree(resource_id)
     end
 
     def oss
@@ -24,36 +24,33 @@ module ManageIQ::Providers
       resources_for('WildFly Server')
     end
 
+    def domain_servers
+      resources_for('Domain WildFly Server')
+    end
+
+    def deployments
+      resources_for('Deployment')
+    end
+
     def host_controllers
       resources_for('Host Controller')
     end
 
-    def domains(host_controller)
-      host_controller.children_by_type('Domain Host')
-        .select { true } #|host| host.properties['Is Domain Controller'] == 'true' }
+    def domains(host_controller = nil)
+      domains = host_controller.nil? ? resources_for('Domain Host') : host_controller.children_by_type('Domain Host')
+      domains.select { |host| host.config['Is Domain Controller'] == 'true' }
     end
 
     def server_groups(host_controller)
       host_controller.children_by_type('Domain Server Group')
     end
 
-    def domain_servers(host_controller)
+    def domain_servers_from_host_controller(host_controller)
       host_controller.children_by_type('Domain WildFly Server', true)
     end
 
     def child_resources(resource_id, recursive = false)
       manager.child_resources(resource_id, recursive)
-    end
-
-    def config_data_for_resource(resource_path)
-      connection.inventory.get_config_data_for_resource(resource_path)
-    end
-
-    def metrics_for_metric_type(feed, metric_type_id)
-      metric_type_path = ::Hawkular::Inventory::CanonicalPath.new(
-        :metric_type_id => metric_type_id, :feed_id => feed
-      )
-      connection.inventory.list_metrics_for_metric_type(metric_type_path)
     end
 
     def raw_availability_data(*args)
@@ -63,7 +60,7 @@ module ManageIQ::Providers
     private
 
     def resources_for(resource_type)
-      connection.inventory_v4.resources_for_type(resource_type)
+      connection.inventory.resources_for_type(resource_type)
     end
   end
 end

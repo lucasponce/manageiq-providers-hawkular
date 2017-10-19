@@ -87,7 +87,7 @@ module ManageIQ::Providers
       end
 
       def fetch_domain_servers(host_controller)
-        collector.domain_servers(host_controller).each do |domain_server|
+        collector.domain_servers_from_host_controller(host_controller).each do |domain_server|
           server = persister.middleware_servers.find_or_build(domain_server.id)
           parse_middleware_server(domain_server, server, true)
 
@@ -174,76 +174,44 @@ module ManageIQ::Providers
       end
 
       def fetch_availability
-        feeds_of_interest = persister.middleware_servers.to_a.map(&:feed).uniq
-        fetch_server_availabilities(feeds_of_interest)
-        fetch_deployment_availabilities(feeds_of_interest)
-        fetch_domain_availabilities(feeds_of_interest)
+        fetch_deployment_availabilities
+        fetch_server_availabilities(collector.eaps)
+        fetch_server_availabilities(collector.domain_servers)
+        fetch_domain_availabilities
       end
 
-      def fetch_deployment_availabilities(feeds)
+      def fetch_deployment_availabilities
         collection = persister.middleware_deployments
-        fetch_availabilities_for(feeds, collection, collection.model_class::AVAIL_TYPE_ID) do |deployment, availability|
+        fetch_availabilities_for(collector.deployments, collection, collection.model_class::AVAIL_TYPE_ID) do |deployment, availability|
           deployment.status = process_deployment_availability(availability.try(:[], 'data').try(:first))
         end
       end
 
-      def fetch_server_availabilities(feeds)
+      def fetch_server_availabilities(servers)
         collection = persister.middleware_servers
-        fetch_availabilities_for(feeds, collection, collection.model_class::AVAIL_TYPE_ID) do |server, availability|
+        fetch_availabilities_for(servers, collection, collection.model_class::AVAIL_TYPE_ID) do |server, availability|
           props = server.properties
-
           props['Availability'], props['Calculated Server State'] =
             process_server_availability(props['Server State'], availability.try(:[], 'data').try(:first))
         end
       end
 
-      def fetch_domain_availabilities(feeds)
+      def fetch_domain_availabilities
         collection = persister.middleware_domains
-        fetch_availabilities_for(feeds, collection, collection.model_class::AVAIL_TYPE_ID) do |domain, availability|
+        fetch_availabilities_for(collector.domains, collection, collection.model_class::AVAIL_TYPE_ID) do |domain, availability|
           domain.properties['Availability'] =
             process_domain_availability(availability.try(:[], 'data').try(:first))
         end
       end
 
-      def fetch_availabilities_for(feeds, collection, metric_type_id)
-        resources_by_metric_id = {}
-        metric_id_by_resource_path = {}
-
-        feeds.each do |feed|
-          status_metrics = collector.metrics_for_metric_type(feed, metric_type_id)
-          status_metrics.each do |status_metric|
-            status_metric_path = ::Hawkular::Inventory::CanonicalPath.parse(status_metric.path)
-            # By dropping metric_id from the canonical path we end up with the resource path
-            resource_path = ::Hawkular::Inventory::CanonicalPath.new(
-              :tenant_id    => status_metric_path.tenant_id,
-              :feed_id      => status_metric_path.feed_id,
-              :resource_ids => status_metric_path.resource_ids
-            )
-            metric_id_by_resource_path[URI.decode(resource_path.to_s)] = status_metric.hawkular_metric_id
-          end
-        end
-
-        collection.each do |item|
-          yield item, nil
-
-          path = URI.decode(item.try(:resource_path_for_metrics) ||
-            item.try(:model_class).try(:resource_path_for_metrics, item) ||
-            item.try(:ems_ref) ||
-            item.manager_uuid)
-          next unless metric_id_by_resource_path.key? path
-          metric_id = metric_id_by_resource_path[path]
-          resources_by_metric_id[metric_id] = [] unless resources_by_metric_id.key? metric_id
-          resources_by_metric_id[metric_id] << item
-        end
-
-        unless resources_by_metric_id.empty?
-          availabilities = collector.raw_availability_data(resources_by_metric_id.keys,
-                                                           :limit => 1, :order => 'DESC')
-          availabilities.each do |availability|
-            resources_by_metric_id[availability['id']].each do |resource|
-              yield resource, availability
-            end
-          end
+      def fetch_availabilities_for(resources, collection, metric_type_id)
+        metric_id_to_resource_id = resources.reject { |r| r.metrics_by_type(metric_type_id).empty? }.map do |resource|
+          [resource.metrics_by_type(metric_type_id).first.hawkular_id, resource.id]
+        end.to_h
+        collector.raw_availability_data(metric_id_to_resource_id.keys, :limit => 1, :order => 'DESC').each do |availability|
+          next unless metric_id_to_resource_id.key? availability['id']
+          resource = collection.find(metric_id_to_resource_id.fetch availability['id'])
+          yield resource, availability
         end
       end
 
@@ -360,10 +328,8 @@ module ManageIQ::Providers
 
       def parse_base_item(item, inventory_object)
         inventory_object.nativeid = item.id
-
-        [:properties, :feed].each do |field|
-          inventory_object[field] = item.send(field) if item.respond_to?(field)
-        end
+        inventory_object[:properties] = item.config if item.respond_to?(:config)
+        inventory_object[:feed] = item.feed if item.respond_to?(:feed)
       end
     end
   end
