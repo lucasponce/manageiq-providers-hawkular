@@ -167,7 +167,7 @@ module ManageIQ::Providers
         persister.middleware_servers.each do |eap|
           eap_tree = collector.resource_tree(eap.ems_ref)
           eap_tree.children(true).each do |child|
-            next unless ['Deployment', 'Datasource', 'JMS Queue', 'JMS Topic'].include?(child.type.id)
+            next unless ['Deployment', 'SubDeployment', 'Datasource', 'JMS Queue', 'JMS Topic'].include?(child.type.id)
             process_server_entity(eap, child)
           end
         end
@@ -184,6 +184,14 @@ module ManageIQ::Providers
         collection = persister.middleware_deployments
         fetch_availabilities_for(collector.deployments, collection, collection.model_class::AVAIL_TYPE_ID) do |deployment, availability|
           deployment.status = process_deployment_availability(availability.try(:[], 'data').try(:first))
+        end
+        subdeployments_by_deployment_id = collector.subdeployments.group_by { |s| s.parent_id }
+        subdeployments_by_deployment_id.keys.each do |parent_id|
+          deployment = collection.find(parent_id)
+          subdeployments_by_deployment_id.fetch(parent_id).each do |collected_subdeployment|
+            subdeployment = collection.find(collected_subdeployment.id)
+            subdeployment.status = deployment.status
+          end
         end
       end
 
@@ -218,7 +226,7 @@ module ManageIQ::Providers
       end
 
       def process_server_entity(server, entity)
-        if entity.type.id == 'Deployment'
+        if ['Deployment', 'SubDeployment'].include?(entity.type.id)
           inventory_object = persister.middleware_deployments.find_or_build(entity.id)
           parse_deployment(entity, inventory_object)
         elsif entity.type.id == 'Datasource'
@@ -253,6 +261,9 @@ module ManageIQ::Providers
       def parse_deployment(deployment, inventory_object)
         parse_base_item(deployment, inventory_object)
         inventory_object.name = deployment.name
+        if deployment.type.id == 'SubDeployment'
+          inventory_object.properties[inventory_object.model_class::PARENT_DEPLOYMENT_ID_PROPERTY] = deployment.parent_id
+        end
       end
 
       def parse_messaging(messaging, inventory_object)
