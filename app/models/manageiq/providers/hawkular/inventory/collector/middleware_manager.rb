@@ -32,6 +32,10 @@ module ManageIQ::Providers
       resources_for('Deployment')
     end
 
+    def subdeployments
+      resources_for('SubDeployment')
+    end
+
     def host_controllers
       resources_for('Host Controller')
     end

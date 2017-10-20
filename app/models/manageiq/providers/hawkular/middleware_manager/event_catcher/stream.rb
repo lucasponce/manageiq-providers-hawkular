@@ -61,8 +61,8 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
 
     server_states = {}
     @ems.middleware_servers.reload.each do |server|
-      inventoried_server = @inventory_client.get_resource(server.ems_ref, true)
-      server_states[server.id] = inventoried_server.try(:properties).try(:[], 'Server State') || ''
+      inventoried_server = @inventory_client.resource(server.ems_ref)
+      server_states[server.id] = inventoried_server.try(:config).try(:[], 'Server State') || ''
     end
 
     # Fetch availabilities and process them together with server state updates.
@@ -131,7 +131,7 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
 
     # Get availabilities
     avails = {}
-    parser.fetch_availabilities_for(feeds, entities, entities.first.class::AVAIL_TYPE_ID) do |item, avail|
+    parser.fetch_availabilities_for(parser.collector.deployments, entities, entities.first.class::AVAIL_TYPE_ID) do |item, avail|
       avail_data = avail.try(:[], 'data').try(:first)
       avails[item.id] = yield(item, avail_data)
 
