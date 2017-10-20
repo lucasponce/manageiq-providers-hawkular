@@ -131,9 +131,21 @@ module ManageIQ::Providers
       end
     end
 
-    def metrics_resource(resource_path)
+    def resource(resource_id)
       with_provider_connection do |connection|
-        connection.inventory.list_metrics_for_resource(resource_path)
+        connection.inventory.resource(resource_id)
+      end
+    end
+
+    def resource_tree(resource_id)
+      with_provider_connection do |connection|
+        connection.inventory.resource_tree(resource_id)
+      end
+    end
+
+    def metrics_resource(resource_id)
+      with_provider_connection do |connection|
+        connection.inventory.resource(resource_id).try(:metrics)
       end
     end
 

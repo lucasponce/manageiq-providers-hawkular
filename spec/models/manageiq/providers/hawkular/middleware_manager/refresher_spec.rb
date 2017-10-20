@@ -43,9 +43,9 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
       'Availability'            => 'up',
       'Calculated Server State' => 'running'
     )
-    assert_specific_datasource(@ems_hawkular, 'Local~/subsystem=datasources/data-source=ExampleDS')
+    assert_specific_datasource(@ems_hawkular, '1aae80bd1d13~Local~/subsystem=datasources/data-source=ExampleDS')
     assert_specific_datasource(@ems_hawkular,
-                               'Local~/host=master/server=server-one/subsystem=datasources/data-source=ExampleDS')
+                               '1aae80bd1d13~Domain~/host=master/server=server-one/subsystem=datasources/data-source=ExampleDS')
     assert_specific_server_group(domain)
     assert_specific_domain_server
     assert_specific_domain
@@ -53,7 +53,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
 
   def assert_specific_datasource(ems, nativeid)
     datasource = ems.middleware_datasources.find_by(:nativeid => nativeid)
-    expect(datasource.name).to eq('Datasource [ExampleDS]')
+    expect(datasource.name).to eq('ExampleDS')
     expect(datasource.nativeid).to eq(nativeid)
     expect(datasource.properties).to include(
       'Driver Name' => 'h2',
@@ -63,10 +63,9 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
   end
 
   def assert_specific_domain
-    domain = @ems_hawkular.middleware_domains.find_by(:feed => 'master.Unnamed%20Domain')
-    expect(domain.name).to eq('Unnamed Domain')
-    expect(domain.nativeid).to eq('Local~/host=master')
-
+    domain = @ems_hawkular.middleware_domains.find_by(:feed => '1aae80bd1d13')
+    expect(domain.name).to eq('master')
+    expect(domain.nativeid).to eq('1aae80bd1d13~Domain~/host=master')
     expect(domain.properties).not_to be_nil
     expect(domain.properties).to include(
       'Running Mode'         => 'NORMAL',
@@ -78,7 +77,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
   def assert_specific_server_group(domain)
     server_group = domain.middleware_server_groups.find_by(:name => 'main-server-group')
     expect(server_group.name).to eq('main-server-group')
-    expect(server_group.nativeid).to eq('Local~/server-group=main-server-group')
+    expect(server_group.nativeid).to eq('1aae80bd1d13~Domain~/server-group=main-server-group')
     expect(server_group.profile).to eq('full')
     expect(server_group.properties).not_to be_nil
     expect(server_group.middleware_deployments).to be_empty
@@ -88,7 +87,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
   def assert_specific_domain_server
     server = @ems_hawkular.middleware_servers.find_by(:name => 'server-one')
     expect(server.name).to eq('server-one')
-    expect(server.nativeid).to eq('Local~/host=master/server=server-one')
+    expect(server.nativeid).to eq("#{the_domain_feed_id}Local~/host=master/server=server-one")
     expect(server.product).to eq('WildFly Full')
     expect(server.hostname).to eq(the_domain_feed_id)
     expect(server.properties).not_to be_nil
@@ -113,7 +112,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
     expect(@ems_hawkular2.middleware_deployments).not_to be_empty
     expect(@ems_hawkular2.middleware_datasources).not_to be_empty
     expect(@ems_hawkular2.middleware_messagings).not_to be_empty
-    assert_specific_datasource(@ems_hawkular2, 'Local~/subsystem=datasources/data-source=ExampleDS')
+    assert_specific_datasource(@ems_hawkular2, '1aae80bd1d13~Local~/subsystem=datasources/data-source=ExampleDS')
   end
 
   describe "#preprocess_targets" do

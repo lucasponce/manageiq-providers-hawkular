@@ -36,7 +36,7 @@ module ManageIQ::Providers
           parse_middleware_server(eap, server)
           agent_config = @data_index.fetch_path(:middleware_agent_config, :by_feed, eap.feed)
           ['Immutable', 'In Container'].each do |feature|
-            server.properties[feature] = 'true' if agent_config[feature] == true
+            server.properties[feature] = 'true' if agent_config.try(:[], feature) == true
           end
           if server.properties['In Container'] == 'true'
             container_id = collector.container_id(eap.feed)['Container Id']
@@ -59,7 +59,7 @@ module ManageIQ::Providers
       def fetch_domains_with_servers
         collector.host_controllers.each do |host_controller|
           host_controller = collector.resource_tree(host_controller.id)
-          collector.domains(host_controller).each do |domain|
+          collector.domains_from_host_controller(host_controller).each do |domain|
             parsed_domain = persister.middleware_domains.find_or_build(domain.id)
             parse_middleware_domain(domain, parsed_domain)
 
@@ -73,7 +73,7 @@ module ManageIQ::Providers
       end
 
       def fetch_server_groups(parsed_domain, host_controller)
-        collector.server_groups(host_controller).map do |group|
+        collector.server_groups_from_host_controller(host_controller).map do |group|
           parsed_group = persister.middleware_server_groups.find_or_build(group.id)
           parse_middleware_server_group(group, parsed_group)
           # TODO: remove this index. Two options for this: 1) try to find or build the ems_ref
@@ -212,11 +212,7 @@ module ManageIQ::Providers
           next unless metric_id_to_resource_id.key? availability['id']
           resource = collection.find(metric_id_to_resource_id.fetch availability['id'])
           yield resource, availability
-        end
-      end
-
-      def process_entity_with_config(server, entity, inventory_object, continuation)
-        send(continuation, entity, inventory_object, entity.config)
+        end unless metric_id_to_resource_id.empty?
       end
 
       def process_server_entity(server, entity)
@@ -225,10 +221,10 @@ module ManageIQ::Providers
           parse_deployment(entity, inventory_object)
         elsif entity.type.id == 'Datasource'
           inventory_object = persister.middleware_datasources.find_or_build(entity.id)
-          process_entity_with_config(server, entity, inventory_object, :parse_datasource)
+          parse_datasource(entity, inventory_object)
         else
           inventory_object = persister.middleware_messagings.find_or_build(entity.id)
-          process_entity_with_config(server, entity, inventory_object, :parse_messaging)
+          parse_messaging(entity, inventory_object)
         end
 
         inventory_object.middleware_server = persister.middleware_servers.lazy_find(server.ems_ref)
@@ -257,21 +253,19 @@ module ManageIQ::Providers
         inventory_object.name = deployment.name
       end
 
-      def parse_messaging(messaging, inventory_object, config)
+      def parse_messaging(messaging, inventory_object)
         parse_base_item(messaging, inventory_object)
         inventory_object.name = messaging.name
 
         inventory_object.messaging_type = messaging.type.id
-        inventory_object.properties = config
-
-        inventory_object.properties = config.except('Username', 'Password')
+        inventory_object.properties = messaging.config.except('Username', 'Password')
       end
 
-      def parse_datasource(datasource, inventory_object, config)
+      def parse_datasource(datasource, inventory_object)
         parse_base_item(datasource, inventory_object)
         inventory_object.name = datasource.name
 
-        inventory_object.properties = config.except('Username', 'Password')
+        inventory_object.properties = datasource.config.except('Username', 'Password')
       end
 
       def parse_middleware_domain(domain, inventory_object)
@@ -317,7 +311,7 @@ module ManageIQ::Providers
 
       def associate_with_vm(server, feed)
         # Add the association to vm instance if there is any
-        machine_id = @data_index.fetch_path(:middleware_os_config, :by_feed, feed)['Machine Id']
+        machine_id = @data_index.fetch_path(:middleware_os_config, :by_feed, feed).try(:fetch, 'Machine Id')
         host_instance = find_host_by_bios_uuid(machine_id) ||
                         find_host_by_bios_uuid(alternate_machine_id(machine_id)) ||
                         find_host_by_bios_uuid(dashed_machine_id(machine_id))
