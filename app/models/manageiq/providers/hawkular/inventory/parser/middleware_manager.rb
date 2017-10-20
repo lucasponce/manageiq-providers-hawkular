@@ -167,7 +167,7 @@ module ManageIQ::Providers
         persister.middleware_servers.each do |eap|
           eap_tree = collector.resource_tree(eap.ems_ref)
           eap_tree.children(true).each do |child|
-            next unless ['Deployment', 'Datasource', 'JMS Queue', 'JMS Topic'].include? child.type.id
+            next unless ['Deployment', 'Datasource', 'JMS Queue', 'JMS Topic'].include?(child.type.id)
             process_server_entity(eap, child)
           end
         end
@@ -208,11 +208,13 @@ module ManageIQ::Providers
         metric_id_to_resource_id = resources.reject { |r| r.metrics_by_type(metric_type_id).empty? }.map do |resource|
           [resource.metrics_by_type(metric_type_id).first.hawkular_id, resource.id]
         end.to_h
-        collector.raw_availability_data(metric_id_to_resource_id.keys, :limit => 1, :order => 'DESC').each do |availability|
-          next unless metric_id_to_resource_id.key? availability['id']
-          resource = collection.find(metric_id_to_resource_id.fetch availability['id'])
-          yield resource, availability
-        end unless metric_id_to_resource_id.empty?
+        unless metric_id_to_resource_id.empty?
+          collector.raw_availability_data(metric_id_to_resource_id.keys, :limit => 1, :order => 'DESC').each do |availability|
+            next unless metric_id_to_resource_id.key?(availability['id'])
+            resource = collection.find(metric_id_to_resource_id.fetch(availability['id']))
+            yield(resource, availability)
+          end
+        end
       end
 
       def process_server_entity(server, entity)
