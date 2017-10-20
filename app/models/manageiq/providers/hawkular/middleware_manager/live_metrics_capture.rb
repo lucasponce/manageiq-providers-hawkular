@@ -14,26 +14,15 @@ module ManageIQ::Providers
     end
 
     def fetch_metrics_available
-      metrics_available = @ems.metrics_resource(@target.ems_ref).collect do |metric|
-        next unless @supported_metrics[metric.type_id]
-        parse_metric(metric)
-      end.compact
-      fetch_child_metrics(@target.ems_ref, metrics_available) if @included_children
-      metrics_available
-    end
-
-    def fetch_child_metrics(resource_path, metrics_available)
-      children = @ems.child_resources(resource_path)
-      children.select { |child| @included_children.include?(child.name) }.each do |child|
-        @ems.metrics_resource(child.path).select { |metric| @supported_metrics[metric.type_id] }.each do |metric|
-          metrics_available << parse_metric(metric)
-        end
+      resource = @included_children ? @ems.resource(@target.ems_ref) : @ems.resource_tree(@target.ems_ref)
+      resource.metrics(@included_children)
+      .select { |m| @supported_metrics.key? m.hawkular_type_id }.collect do |metric|
+        parse_metric metric
       end
-      metrics_available
     end
 
     def parse_metric(metric)
-      {:id => metric.id, :name => @supported_metrics[metric.type_id], :type => metric.type, :unit => metric.unit}
+      {:id => metric.hawkular_id, :name => @supported_metrics[metric.hawkular_type_id], :type => metric.hawkular_type, :unit => metric.unit}
     end
 
     def parse_metrics_ids(metrics)

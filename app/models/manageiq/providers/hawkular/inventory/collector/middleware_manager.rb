@@ -36,12 +36,15 @@ module ManageIQ::Providers
       resources_for('Host Controller')
     end
 
-    def domains(host_controller = nil)
-      domains = host_controller.nil? ? resources_for('Domain Host') : host_controller.children_by_type('Domain Host')
-      domains.select { |host| host.config['Is Domain Controller'] == 'true' }
+    def domains
+      select_domain_controllers resources_for('Domain Host')
     end
 
-    def server_groups(host_controller)
+    def domains_from_host_controller(host_controller)
+      select_domain_controllers host_controller.children_by_type('Domain Host')
+    end
+
+    def server_groups_from_host_controller(host_controller)
       host_controller.children_by_type('Domain Server Group')
     end
 
@@ -61,6 +64,10 @@ module ManageIQ::Providers
 
     def resources_for(resource_type)
       connection.inventory.resources_for_type(resource_type)
+    end
+
+    def select_domain_controllers(domains)
+      domains.select { |host| host.config['Is Domain Controller'] == 'true' }
     end
   end
 end

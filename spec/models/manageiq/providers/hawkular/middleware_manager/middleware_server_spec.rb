@@ -1,6 +1,6 @@
 require_relative 'hawkular_helper'
 
-# VCR Cassettes: Hawkular Services 0.0.13.Final-SNAPSHOT (commit 3cef2062513f4d949aa21a90db51f9cd105cf329)
+# VCR Cassettes: Hawkular Services 0.40.0.Final-SNAPSHOT (commit 61ad2c1db6dc94062841ca2f5be9699e69d96cfe)
 
 describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareServer do
   subject { described_class.new(:properties => {}) }
@@ -23,9 +23,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareServer do
     FactoryGirl.create(:hawkular_middleware_server,
                        :name                  => 'Local',
                        :feed                  => the_feed_id,
-                       :ems_ref               => '/t;hawkular'\
-                       "/f;#{the_feed_id}/r;Local%20DMR~~",
-                       :nativeid              => 'Local%20DMR~~',
+                       :ems_ref               => "#{the_feed_id}~Local~~",
+                       :nativeid              => "#{the_feed_id}~Local~~",
                        :ext_management_system => ems_hawkular)
   end
 
@@ -94,7 +93,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareServer do
     VCR.use_cassette(described_class.name.underscore.to_s,
                      :allow_unused_http_interactions => true,
                      :match_requests_on              => [:method, :uri, :body],
-                     :decode_compressed_response     => true) do
+                     :decode_compressed_response     => true) do # , :record => :new_episodes) do
                        metrics_available = eap.metrics_available
                        expect(metrics_available.size).to be > 3
                        metrics_data = eap.collect_live_metrics(metrics_available[0, 3],
@@ -110,7 +109,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareServer do
   it "#first_and_last_capture" do
     VCR.use_cassette(described_class.name.underscore.to_s,
                      :allow_unused_http_interactions => true,
-                     :decode_compressed_response     => true) do
+                     :decode_compressed_response     => true) do # , :record => :new_episodes) do
                        capture = eap.first_and_last_capture
                        expect(capture.any?).to be true
                        expect(capture[0]).to be < capture[1]
@@ -129,7 +128,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareServer do
   it "#metrics_available" do
     VCR.use_cassette(described_class.name.underscore.to_s,
                      :allow_unused_http_interactions => true,
-                     :decode_compressed_response     => true) do
+                     :decode_compressed_response     => true) do # , :record => :new_episodes) do
                        metrics_available = eap.metrics_available
                        metrics_available.each { |metric| expect(expected_metrics.value?(metric[:name])).to be(true) }
                      end
