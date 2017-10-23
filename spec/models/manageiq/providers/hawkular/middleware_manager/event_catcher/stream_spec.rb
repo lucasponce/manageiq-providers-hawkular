@@ -23,31 +23,37 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
           'properties' => {
             'hawkular.metric.typeId' => 't1',
             'hawkular.metric.type'   => 'unit1',
-            'hawkular.metric.id'     => 'mt1'
+            'hawkular.metric.id'     => 'm1'
           }
         }
       ]
     )
   end
+  let(:server_availability_metric) do
+    {
+      'name'       => 'm1',
+      'type'       => 'Server Availability',
+      'unit'       => 'BYTES',
+      'properties' => {
+        'hawkular.metric.typeId' => 't1',
+        'hawkular.metric.type'   => 'unit1',
+        'hawkular.metric.id'     => 'm1'
+      }
+    }
+  end
+
   let(:server_resource) do
     ::Hawkular::Inventory::Resource.new(
+    {
       'id'      => 'server_id',
       'name'    => 'bar',
       'type'    => {
         'id' => 'WildFly Server'
       },
       'metrics' => [
-        {
-          'name'       => 'm1',
-          'type'       => 'm1',
-          'unit'       => 'BYTES',
-          'properties' => {
-            'hawkular.metric.typeId' => 't1',
-            'hawkular.metric.type'   => 'unit1',
-            'hawkular.metric.id'     => 'mt1'
-          }
-        }
+        server_availability_metric
       ]
+    }
     )
   end
   let(:domain_resource) do
@@ -103,6 +109,9 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
     allow(client).to receive(:resources_for_type)
       .with('WildFly Server')
       .and_return([server_resource])
+    allow(client).to receive(:resources_for_type)
+      .with('Domain WildFly Server')
+      .and_return([])
 
     allow(client).to receive(:resources_for_type)
       .with('Domain Host')
@@ -156,7 +165,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
     end
 
     it "yields a valid event" do
-      ems_hawkular.middleware_deployments.create(:feed => 'f1', :ems_ref => '/t;hawkular/f;f1/r;resource1')
+      ems_hawkular.middleware_deployments.create(:feed => 'f1', :ems_ref => 'r1')
 
       # if generating a cassette the polling window is the previous 1 minute
       # TODO: Make it predictable with live tests.
@@ -180,7 +189,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
     let!(:db_server) do
       ems_hawkular.middleware_servers.create(
         :feed       => 'f1',
-        :ems_ref    => '/t;hawkular/f;f1/r;resource1',
+        :ems_ref    => 'r1',
         :properties => {
           'Server State'            => 'running',
           'Availability'            => 'up',
@@ -194,7 +203,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
         'path'             => db_server.ems_ref,
         'name'             => 'server 1',
         'type'             => { 'id' => 'type_id', 'operations' => [] },
-        'properties'       => { 'Server State' => 'running' }
+        'config'           => { 'Server State' => 'running' },
+        'metrics'          => [ server_availability_metric ]
       )
     end
 
@@ -258,7 +268,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
 
     it "must return updated state if inventory server state has changed" do
       # Set-up
-      server_resource.properties['Server State'] = 'reload-required'
+      server_resource.config['Server State'] = 'reload-required'
 
       # Try
       updates = subject.send(:fetch_availabilities)
@@ -300,7 +310,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
   end
 
   describe "#fetch_availabilities (deployments)" do
-    let!(:db_deployment) { ems_hawkular.middleware_deployments.create(:feed => 'f1', :ems_ref => '/t;hawkular/f;f1/r;resource1', :status => 'Disabled') }
+    let!(:db_deployment) { ems_hawkular.middleware_deployments.create(:feed => 'f1', :ems_ref => 'r1', :status => 'Disabled') }
 
     it "must return updated status for deployment whose availability has changed" do
       # Try
