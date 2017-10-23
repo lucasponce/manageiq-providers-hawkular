@@ -49,7 +49,6 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
   def fetch_availabilities
     parser = ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager.new
     parser.collector = ManageIQ::Providers::Hawkular::Inventory::Collector::MiddlewareManager.new(@ems, nil)
-
     fetch_server_availabilities(parser) +
       fetch_deployment_availabilities(parser) +
       fetch_domain_availabilities(parser)
@@ -58,7 +57,6 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
   def fetch_server_availabilities(parser)
     # For servers, it's also needed to refresh server states from inventory.
     $mw_log.debug("#{log_prefix} Retrieving server states from Hawkular inventory")
-
     server_states = {}
     @ems.middleware_servers.reload.each do |server|
       inventoried_server = @inventory_client.resource(server.ems_ref)
@@ -66,7 +64,8 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
     end
 
     # Fetch availabilities and process them together with server state updates.
-    fetch_entities_availabilities(parser, @ems.middleware_servers) do |item, avail|
+    servers = parser.collector.eaps.concat(parser.collector.domain_servers)
+    fetch_entities_availabilities(servers, parser, @ems.middleware_servers) do |item, avail|
       server_state = server_states[item.id]
       avail_data, calculated_status = parser.process_server_availability(server_state, avail)
 
@@ -90,7 +89,7 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
   end
 
   def fetch_deployment_availabilities(parser)
-    fetch_entities_availabilities(parser, @ems.middleware_deployments.reload) do |item, avail|
+    fetch_entities_availabilities(parser.collector.deployments, parser, @ems.middleware_deployments.reload) do |item, avail|
       status = parser.process_deployment_availability(avail)
       next nil if item.status == status
 
@@ -105,7 +104,7 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
   end
 
   def fetch_domain_availabilities(parser)
-    fetch_entities_availabilities(parser, @ems.middleware_domains.reload) do |item, avail|
+    fetch_entities_availabilities(parser.collector.domains, parser, @ems.middleware_domains.reload) do |item, avail|
       status = parser.process_domain_availability(avail)
       next if item.availability == status
 
@@ -119,19 +118,16 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
     end
   end
 
-  def fetch_entities_availabilities(parser, entities)
+  def fetch_entities_availabilities(inventory_entities, parser, entities)
     return [] if entities.blank?
     log_name = entities.first.class.name.demodulize
 
-    # Get feeds where availabilities should be looked in.
-    feeds = entities.map(&:feed).uniq
-
     $mw_log.debug("#{log_prefix} Retrieving availabilities for #{entities.count} " \
-                  "#{log_name.pluralize(entities.count)} in #{feeds.count} feeds.")
+                  "#{log_name.pluralize(entities.count)}.")
 
     # Get availabilities
     avails = {}
-    parser.fetch_availabilities_for(parser.collector.deployments, entities, entities.first.class::AVAIL_TYPE_ID) do |item, avail|
+    parser.fetch_availabilities_for(inventory_entities, entities, entities.first.class::AVAIL_TYPE_ID) do |item, avail|
       avail_data = avail.try(:[], 'data').try(:first)
       avails[item.id] = yield(item, avail_data)
 
