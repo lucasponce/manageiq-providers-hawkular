@@ -187,9 +187,9 @@ module ManageIQ::Providers
         end
         subdeployments_by_deployment_id = collector.subdeployments.group_by(&:parent_id)
         subdeployments_by_deployment_id.keys.each do |parent_id|
-          deployment = collection.find_by(ems_ref: parent_id)
+          deployment = collection.find_by(:ems_ref => parent_id)
           subdeployments_by_deployment_id.fetch(parent_id).each do |collected_subdeployment|
-            subdeployment = collection.find_by(ems_ref: collected_subdeployment.id)
+            subdeployment = collection.find_by(:ems_ref => collected_subdeployment.id)
             subdeployment.status = deployment.status
           end
         end
@@ -220,14 +220,14 @@ module ManageIQ::Providers
           found_availabilities = []
           collector.raw_availability_data(metric_id_to_resource_id.keys, :limit => 1, :order => 'DESC').each do |availability|
             next unless metric_id_to_resource_id.key?(availability['id'])
-            resource = collection.find_by(ems_ref: metric_id_to_resource_id.fetch(availability['id']))
+            resource = collection.find_by(:ems_ref => metric_id_to_resource_id.fetch(availability['id']))
             found_availabilities << resource.ems_ref
             yield(resource, availability)
           end
           # Provide means to notify if there is a resource without the avail metric
           ems_ref_of_unknown_avail = metric_id_to_resource_id.values.to_set.subtract(found_availabilities).to_a
           ems_ref_of_unknown_avail.each do |resource_ems_ref|
-            yield collection.find_by(ems_ref: resource_ems_ref), nil
+            yield(collection.find_by(:ems_ref => resource_ems_ref), nil)
           end
         end
       end
