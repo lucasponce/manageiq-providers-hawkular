@@ -39,19 +39,17 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
       'type'    => {
         'id' => 'Deployment'
       },
-      'metrics' => [ deployment_availability_metric ]
+      'metrics' => [deployment_availability_metric]
     )
   end
   let(:server_resource) do
     ::Hawkular::Inventory::Resource.new(
-    {
       'id'      => 'server_id',
       'name'    => 'bar',
       'type'    => {
         'id' => 'WildFly Server'
       },
-      'metrics' => [ server_availability_metric ]
-    }
+      'metrics' => [server_availability_metric]
     )
   end
   let(:domain_resource) do
@@ -197,12 +195,11 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
     end
     let(:server_resource) do
       ::Hawkular::Inventory::Resource.new(
-        'id'               => 'r1',
-        'path'             => db_server.ems_ref,
-        'name'             => 'server 1',
-        'type'             => { 'id' => 'type_id', 'operations' => [] },
-        'config'           => { 'Server State' => 'running' },
-        'metrics'          => [ server_availability_metric ]
+        'id'      => 'r1',
+        'name'    => 'server 1',
+        'type'    => { 'id' => 'type_id', 'operations' => [] },
+        'config'  => { 'Server State' => 'running' },
+        'metrics' => [server_availability_metric]
       )
     end
 
