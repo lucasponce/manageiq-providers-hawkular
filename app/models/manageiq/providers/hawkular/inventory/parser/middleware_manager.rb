@@ -185,7 +185,7 @@ module ManageIQ::Providers
         fetch_availabilities_for(collector.deployments, collection, collection.model_class::AVAIL_TYPE_ID) do |deployment, availability|
           deployment.status = process_deployment_availability(availability.try(:[], 'data').try(:first))
         end
-        subdeployments_by_deployment_id = collector.subdeployments.group_by { |s| s.parent_id }
+        subdeployments_by_deployment_id = collector.subdeployments.group_by(&:parent_id)
         subdeployments_by_deployment_id.keys.each do |parent_id|
           deployment = collection.find(parent_id)
           subdeployments_by_deployment_id.fetch(parent_id).each do |collected_subdeployment|
@@ -226,7 +226,7 @@ module ManageIQ::Providers
       end
 
       def process_server_entity(server, entity)
-        if ['Deployment', 'SubDeployment'].include?(entity.type.id)
+        if %w(Deployment SubDeployment).include?(entity.type.id)
           inventory_object = persister.middleware_deployments.find_or_build(entity.id)
           parse_deployment(entity, inventory_object)
         elsif entity.type.id == 'Datasource'

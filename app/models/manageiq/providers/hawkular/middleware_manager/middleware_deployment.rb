@@ -4,7 +4,7 @@ module ManageIQ::Providers
     PARENT_DEPLOYMENT_ID_PROPERTY = 'Parent deployment id'.freeze
 
     def parent_deployment_id
-      self.properties.try(:[], PARENT_DEPLOYMENT_ID_PROPERTY)
+      properties.try(:[], PARENT_DEPLOYMENT_ID_PROPERTY)
     end
 
   end

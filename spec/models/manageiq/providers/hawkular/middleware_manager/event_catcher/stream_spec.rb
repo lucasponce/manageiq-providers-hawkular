@@ -8,14 +8,70 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
 
   let(:metric_type_meta) { OpenStruct.new(:type => 't1', :id => 'mt1', :unit => 'unit1') }
   let(:availability_metric) { { 'id' => 'm1', 'data' => [{ 'timestamp' => 400, 'value' => 'up'}] } }
-  let(:resource_metric_definition) do
-    ::Hawkular::Inventory::Metric.new(
-      {
-        'id'         => 'm1',
-        'path'       => '/t;hawkular/f;f1/r;resource1/m;1',
-        'properties' => { 'hawkular-metric-id' => 'm1' }
+  let(:deployment_resource) do
+    ::Hawkular::Inventory::Resource.new(
+      'id'      => 'deployment_id',
+      'name'    => 'foo',
+      'type'    => {
+        'id' => 'Deployment'
       },
-      metric_type_meta
+      'metrics' => [
+        {
+          'name'       => 'm1',
+          'type'       => 'm1',
+          'unit'       => 'BYTES',
+          'properties' => {
+            'hawkular.metric.typeId' => 't1',
+            'hawkular.metric.type'   => 'unit1',
+            'hawkular.metric.id'     => 'mt1'
+          }
+        }
+      ]
+    )
+  end
+  let(:server_resource) do
+    ::Hawkular::Inventory::Resource.new(
+      'id'      => 'server_id',
+      'name'    => 'bar',
+      'type'    => {
+        'id' => 'WildFly Server'
+      },
+      'metrics' => [
+        {
+          'name'       => 'm1',
+          'type'       => 'm1',
+          'unit'       => 'BYTES',
+          'properties' => {
+            'hawkular.metric.typeId' => 't1',
+            'hawkular.metric.type'   => 'unit1',
+            'hawkular.metric.id'     => 'mt1'
+          }
+        }
+      ]
+    )
+  end
+  let(:domain_resource) do
+    ::Hawkular::Inventory::Resource.new(
+      'id'      => 'server_id',
+      'name'    => 'bar',
+      'type'    => {
+        'id' => 'Domain Host'
+      },
+      'config'  => {
+        'Is Domain Controller' => 'true'
+      },
+      'metrics' => [
+        {
+          'name'       => 'm1',
+          'type'       => 'm1',
+          'unit'       => 'BYTES',
+          'properties' => {
+            'hawkular.metric.typeId' => 't1',
+            'hawkular.metric.type'   => 'unit1',
+            'hawkular.metric.id'     => 'mt1'
+          }
+        }
+      ]
     )
   end
 
@@ -40,18 +96,17 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
   let(:stubbed_inventory_client) do
     client = instance_double('::Hawkular::Inventory::Client')
 
-    allow(client).to receive(:list_metrics_for_metric_type)
-      .with(hawkular_cp(:feed_id        => 'f1',
-                        :metric_type_id => ::ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareServer::AVAIL_TYPE_ID))
-      .and_return([resource_metric_definition])
-    allow(client).to receive(:list_metrics_for_metric_type)
-      .with(hawkular_cp(:feed_id        => 'f1',
-                        :metric_type_id => ::ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDeployment::AVAIL_TYPE_ID))
-      .and_return([resource_metric_definition])
-    allow(client).to receive(:list_metrics_for_metric_type)
-      .with(hawkular_cp(:feed_id        => 'f1',
-                        :metric_type_id => ::ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDomain::AVAIL_TYPE_ID))
-      .and_return([resource_metric_definition])
+    allow(client).to receive(:resources_for_type)
+      .with('Deployment')
+      .and_return([deployment_resource])
+
+    allow(client).to receive(:resources_for_type)
+      .with('WildFly Server')
+      .and_return([server_resource])
+
+    allow(client).to receive(:resources_for_type)
+      .with('Domain Host')
+      .and_return([domain_resource])
 
     client
   end
@@ -138,7 +193,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
         'id'               => 'r1',
         'path'             => db_server.ems_ref,
         'name'             => 'server 1',
-        'resourceTypePath' => 'type_path',
+        'type'             => { 'id' => 'type_id', 'operations' => [] },
         'properties'       => { 'Server State' => 'running' }
       )
     end
