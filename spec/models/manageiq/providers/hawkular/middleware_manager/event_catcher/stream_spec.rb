@@ -8,26 +8,17 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
 
   let(:metric_type_meta) { OpenStruct.new(:type => 't1', :id => 'mt1', :unit => 'unit1') }
   let(:availability_metric) { { 'id' => 'm1', 'data' => [{ 'timestamp' => 400, 'value' => 'up'}] } }
-  let(:deployment_resource) do
-    ::Hawkular::Inventory::Resource.new(
-      'id'      => 'deployment_id',
-      'name'    => 'foo',
-      'type'    => {
-        'id' => 'Deployment'
-      },
-      'metrics' => [
-        {
-          'name'       => 'm1',
-          'type'       => 'm1',
-          'unit'       => 'BYTES',
-          'properties' => {
-            'hawkular.metric.typeId' => 't1',
-            'hawkular.metric.type'   => 'unit1',
-            'hawkular.metric.id'     => 'm1'
-          }
-        }
-      ]
-    )
+  let(:deployment_availability_metric) do
+    {
+      'name'       => 'm1',
+      'type'       => 'Deployment Status',
+      'unit'       => 'BYTES',
+      'properties' => {
+        'hawkular.metric.typeId' => 't1',
+        'hawkular.metric.type'   => 'unit1',
+        'hawkular.metric.id'     => 'm1'
+      }
+    }
   end
   let(:server_availability_metric) do
     {
@@ -41,7 +32,16 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
       }
     }
   end
-
+  let(:deployment_resource) do
+    ::Hawkular::Inventory::Resource.new(
+      'id'      => 'r1',
+      'name'    => 'foo',
+      'type'    => {
+        'id' => 'Deployment'
+      },
+      'metrics' => [ deployment_availability_metric ]
+    )
+  end
   let(:server_resource) do
     ::Hawkular::Inventory::Resource.new(
     {
@@ -50,9 +50,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
       'type'    => {
         'id' => 'WildFly Server'
       },
-      'metrics' => [
-        server_availability_metric
-      ]
+      'metrics' => [ server_availability_metric ]
     }
     )
   end
