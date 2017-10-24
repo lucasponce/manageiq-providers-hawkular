@@ -32,25 +32,18 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
   describe 'parse_datasource' do
     it 'handles simple data' do
       # parse_datasource(server, datasource, config)
-      datasource = double(:name => 'ruby-sample-build',
-                          :id   => 'Local~/subsystem=datasources/data-source=ExampleDS',
-                          :path => '/t;Hawkular'\
-                            "/f;#{the_feed_id}/r;Local~~"\
-                            '/r;Local~%2Fsubsystem%3Ddatasources%2Fdata-source%3DExampleDS')
-      config = {
-        'value' => {
-          'Driver Name'    => 'h2',
-          'JNDI Name'      => 'java:jboss/datasources/ExampleDS',
-          'Connection URL' => 'jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE',
-          'Enabled'        => 'true'
-        }
-      }
+      datasource = double(:name   => 'ruby-sample-build',
+                          :id     => 'datasource_id',
+                          :config => {
+                            'Driver Name'    => 'h2',
+                            'JNDI Name'      => 'java:jboss/datasources/ExampleDS',
+                            'Connection URL' => 'jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE',
+                            'Enabled'        => 'true'
+                          })
       parsed_datasource = {
         :name       => 'ruby-sample-build',
-        :nativeid   => 'Local~/subsystem=datasources/data-source=ExampleDS',
-        :ems_ref    => '/t;Hawkular'\
-                            "/f;#{the_feed_id}/r;Local~~"\
-                            '/r;Local~%2Fsubsystem%3Ddatasources%2Fdata-source%3DExampleDS',
+        :nativeid   => 'datasource_id',
+        :ems_ref    => 'datasource_id',
         :properties => {
           'Driver Name'    => 'h2',
           'JNDI Name'      => 'java:jboss/datasources/ExampleDS',
@@ -58,15 +51,15 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
           'Enabled'        => 'true'
         }
       }
-      inventory_obj = persister.middleware_datasources.build(:ems_ref => datasource.path)
-      parser.parse_datasource(datasource, inventory_obj, config)
+      inventory_obj = persister.middleware_datasources.build(:ems_ref => datasource.id)
+      parser.parse_datasource(datasource, inventory_obj)
       expect(inventory_object_data(inventory_obj)).to eq(parsed_datasource)
     end
   end
 
   describe 'parse_domain' do
     it 'handles simple data' do
-      properties = {
+      config = {
         'Running Mode'         => 'NORMAL',
         'Version'              => '9.0.2.Final',
         'Product Name'         => 'WildFly Full',
@@ -74,97 +67,103 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
         'Is Domain Controller' => 'true',
         'Name'                 => 'master',
       }
+      type_id = 'Host Controller'
       feed = 'master.Unnamed%20Domain'
-      id = 'Local~/host=master'
-      path = '/t;hawkular/f;master.Unnamed%20Domain/r;Local~~/r;Local~%2Fhost%3Dmaster'
-      type_path = '/t;hawkular/f;master.Unnamed%20Domain/rt;Domain%20Host'
-      domain = OpenStruct.new(:feed       => feed,
-                              :id         => id,
-                              :path       => path,
-                              :properties => properties,
-                              :type_path  => type_path)
+      id = 'domain_id'
+      name = 'Unnamed Domain'
+      type = OpenStruct.new(:id => type_id)
+      domain = OpenStruct.new(:name   => name,
+                              :feed   => feed,
+                              :id     => id,
+                              :config => config,
+                              :type   => type)
       parsed_domain = {
-        :name       => 'Unnamed Domain',
+        :name       => name,
         :feed       => feed,
-        :type_path  => type_path,
+        :type_path  => type_id,
         :nativeid   => id,
-        :ems_ref    => path,
-        :properties => properties,
+        :ems_ref    => id,
+        :properties => config,
       }
-      inventory_obj = persister.middleware_domains.build(:ems_ref => path)
-      parser.parse_middleware_domain('master.Unnamed Domain', domain, inventory_obj)
+      inventory_obj = persister.middleware_domains.build(:ems_ref => id)
+      parser.parse_middleware_domain(domain, inventory_obj)
       expect(inventory_object_data(inventory_obj)).to eq(parsed_domain)
     end
   end
 
   describe 'fetch_availabilities_for' do
-    let(:stubbed_resource) { OpenStruct.new(:manager_uuid => '/t;hawkular/f;f1/r;stubbed_resource') }
+    let(:stubbed_resource) { OpenStruct.new(:ems_ref => '/t;hawkular/f;f1/r;stubbed_resource') }
     let(:stubbed_metric_definition) { OpenStruct.new(:path => '/t;hawkular/f;f1/r;stubbed_resource/m;m1', :hawkular_metric_id => 'm1') }
 
+    let(:resource_1) { OpenStruct.new(:id => '/t;hawkular/f;f1/r;stubbed_resource') }
+    let(:resource_2) { OpenStruct.new(:id => 'resource_2_id') }
+
+    let(:collection) { OpenStruct.new }
+
+    let(:metric) do
+      OpenStruct.new(
+        :properties => OpenStruct.new(
+          :'hawkular.metric.typeId' => 'metric_type',
+          :'hawkular.metric.id'     => 'm1'
+        )
+      )
+    end
+
     before do
-      allow(collector_double).to receive(:metrics_for_metric_type).and_return([])
-      allow(collector_double).to receive(:metrics_for_metric_type)
-        .with('f1', 'metric_type')
-        .and_return([stubbed_metric_definition])
       allow(collector_double).to receive(:raw_availability_data)
         .with(%w(m1), hash_including(:order => 'DESC'))
         .and_return([stubbed_metric_data])
+
+      allow(metric).to receive(:hawkular_id).and_return(metric.properties['hawkular.metric.id'])
+
+      allow(resource_1).to receive(:metrics_by_type).and_return([metric])
+      allow(resource_2).to receive(:metrics_by_type).and_return([metric])
+      allow(collection).to receive(:find_by).and_return(OpenStruct.new(:ems_ref => 'random'))
+      allow(collection).to receive(:find_by)
+        .with(:ems_ref => stubbed_resource.ems_ref)
+        .and_return(stubbed_resource)
     end
 
-    def call_subject(feeds = %w(f1), resources = [stubbed_resource])
+    def call_subject(inventory_resources, collection)
       matched_metrics = {}
-      parser.fetch_availabilities_for(feeds, resources, 'metric_type') do |resource, metric|
+      parser.fetch_availabilities_for(inventory_resources, collection, 'metric_type') do |resource, metric|
         matched_metrics[resource] = metric
       end
 
       matched_metrics
     end
 
-    it 'must query collector for metrics for every feed' do
-      expect(collector_double).to receive(:metrics_for_metric_type).with('f1', 'metric_type')
-      expect(collector_double).to receive(:metrics_for_metric_type).with('f2', 'metric_type')
+    it 'must query resources for metrics type' do
+      expect(resource_1).to receive(:metrics_by_type).with('metric_type')
+      expect(resource_2).to receive(:metrics_by_type).with('metric_type')
 
-      parser.fetch_availabilities_for(%w(f2 f1), [], 'metric_type')
+      parser.fetch_availabilities_for([resource_1, resource_2], collection, 'metric_type') { |r, m| }
     end
 
     it 'must call block with missing metrics to allow caller to set defaults' do
-      stubbed_resource.manager_uuid += 'idsuffix'
+      allow(metric).to receive(:hawkular_id).and_return('idsuffix')
+      allow(collector_double).to receive(:raw_availability_data)
+        .with(%w(idsuffix), hash_including(:order => 'DESC'))
+        .and_return([])
 
-      matched_metrics = call_subject
+      matched_metrics = call_subject([resource_1], collection)
       expect(matched_metrics).to eq(stubbed_resource => nil)
     end
 
     it 'must call block with matching resource and metric to allow caller to process the metric' do
-      matched_metrics = call_subject
+      matched_metrics = call_subject([resource_1], collection)
       expect(matched_metrics).to eq(stubbed_resource => stubbed_metric_data)
     end
 
     it 'must call block handling a metric shared by more than one resource' do
-      stubbed_resource2 = OpenStruct.new(:manager_uuid => '/t;hawkular/f;f1/r;stubbed_resource2')
-      stubbed_metric_definition2 = OpenStruct.new(:path => '/t;hawkular/f;f1/r;stubbed_resource2/m;m1', :hawkular_metric_id => 'm1')
+      stubbed_resource2 = OpenStruct.new(:ems_ref => 'resource_2_id')
 
-      expect(collector_double).to receive(:metrics_for_metric_type)
-        .with('f1', 'metric_type')
-        .and_return([stubbed_metric_definition, stubbed_metric_definition2])
+      allow(collection).to receive(:find_by)
+        .with(:ems_ref => stubbed_resource2.ems_ref)
+        .and_return(stubbed_resource2)
 
-      matched_metrics = call_subject(%w(f1), [stubbed_resource, stubbed_resource2])
+      matched_metrics = call_subject([resource_1, resource_2], collection)
       expect(matched_metrics).to eq(stubbed_resource => stubbed_metric_data, stubbed_resource2 => stubbed_metric_data)
-    end
-
-    it 'must call block handling resources in more than one feed' do
-      stubbed_resource2 = OpenStruct.new(:manager_uuid => '/t;hawkular/f;another_feed/r;stubbed_resource')
-      stubbed_metric_definition2 = OpenStruct.new(:path => '/t;hawkular/f;another_feed/r;stubbed_resource/m;m2', :hawkular_metric_id => 'm2')
-      stubbed_metric_data2 = OpenStruct.new(:id => 'm2', :data => [{'timestamp' => 1, 'value' => 'other value'}])
-
-      expect(collector_double).to receive(:metrics_for_metric_type)
-        .with('another_feed', 'metric_type')
-        .and_return([stubbed_metric_definition2])
-      expect(collector_double).to receive(:raw_availability_data)
-        .with(%w(m1 m2), hash_including(:order => 'DESC'))
-        .and_return([stubbed_metric_data, stubbed_metric_data2])
-
-      matched_metrics = call_subject(%w(another_feed f1), [stubbed_resource, stubbed_resource2])
-      expect(matched_metrics).to eq(stubbed_resource => stubbed_metric_data, stubbed_resource2 => stubbed_metric_data2)
     end
   end
 
@@ -177,6 +176,8 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
         :model_class,
         -> { ::ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDeployment }
       )
+      allow(collector_double).to receive(:deployments).and_return([])
+      allow(collector_double).to receive(:subdeployments).and_return([])
 
       allow(persister_double).to receive(:middleware_deployments).and_return(deployments_collection)
       allow(parser).to receive(:fetch_availabilities_for)
@@ -184,27 +185,27 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
     end
 
     it 'uses fetch_availabilities_for to fetch deployment availabilities' do
-      parser.fetch_deployment_availabilities(%w(f1))
+      parser.fetch_deployment_availabilities
       expect(parser).to have_received(:fetch_availabilities_for)
-        .with(%w(f1), [stubbed_deployment], 'Deployment%20Status~Deployment%20Status')
+        .with([], [stubbed_deployment], 'Deployment Status')
     end
 
     it 'assigns enabled status to a deployment with "up" metric' do
       stubbed_metric_data.data.first['value'] = 'up'
 
-      parser.fetch_deployment_availabilities(%w(f1))
+      parser.fetch_deployment_availabilities
       expect(stubbed_deployment.status).to eq('Enabled')
     end
 
     it 'assigns disabled status to a deployment with "down" metric' do
       stubbed_metric_data.data.first['value'] = 'down'
 
-      parser.fetch_deployment_availabilities(%w(f1))
+      parser.fetch_deployment_availabilities
       expect(stubbed_deployment.status).to eq('Disabled')
     end
 
     it 'assigns unknown status to a deployment whose metric is something else than "up" or "down"' do
-      parser.fetch_deployment_availabilities(%w(f1))
+      parser.fetch_deployment_availabilities
       expect(stubbed_deployment.status).to eq('Unknown')
     end
 
@@ -212,7 +213,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
       allow(parser).to receive(:fetch_availabilities_for)
         .and_yield(stubbed_deployment, nil)
 
-      parser.fetch_deployment_availabilities(%w(f1))
+      parser.fetch_deployment_availabilities
       expect(stubbed_deployment.status).to eq('Unknown')
     end
   end
@@ -231,21 +232,22 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
     end
 
     it 'uses fetch_availabilities_for to resolve server availabilities' do
-      parser.fetch_server_availabilities(%w(f1))
+      parser.fetch_server_availabilities([])
       expect(parser).to have_received(:fetch_availabilities_for)
-        .with(%w(f1), [server], 'Server%20Availability~Server%20Availability')
+        .with([], [server], 'Server Availability')
     end
 
     it 'assigns status reported by inventory to a server with "up" metric' do
       stubbed_metric_data.data.first['value'] = 'up'
 
-      parser.fetch_server_availabilities(%w(f1))
+      parser.fetch_server_availabilities([])
+
       expect(server.properties['Availability']).to eq('up')
       expect(server.properties['Calculated Server State']).to eq(server.properties['Server State'])
     end
 
     it 'assigns status reported by metric to a server when its availability metric is something else than "up"' do
-      parser.fetch_server_availabilities(%w(f1))
+      parser.fetch_server_availabilities([])
       expect(server.properties['Availability']).to eq('arbitrary value')
       expect(server.properties['Calculated Server State']).to eq('arbitrary value')
     end
@@ -254,7 +256,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
       allow(parser).to receive(:fetch_availabilities_for)
         .and_yield(server, nil)
 
-      parser.fetch_server_availabilities(%w(f1))
+      parser.fetch_server_availabilities([])
       expect(server.properties['Availability']).to eq('unknown')
       expect(server.properties['Calculated Server State']).to eq('unknown')
     end
@@ -380,21 +382,21 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
 
   describe 'associate_with_vm' do
     it 'should be able to associate with the existing vm' do
-      allow(collector_double).to receive(:machine_id).and_return(test_machine_id)
+      allow(parser).to receive(:machine_id_by_feed).with(server.feed).and_return(test_machine_id)
       vm = FactoryGirl.create(:vm_redhat, :uid_ems => test_machine_id)
       parser.associate_with_vm(server, server.feed)
       expect(server.lives_on).to eq(vm)
     end
 
     it 'should associate to vm even if agent reports machine id withouth dashes, but vm guid is reported with dashes' do
-      allow(collector_double).to receive(:machine_id).and_return('abcdef1234567890abcdef1234567890')
+      allow(parser).to receive(:machine_id_by_feed).with(server.feed).and_return('abcdef1234567890abcdef1234567890')
       vm = FactoryGirl.create(:vm_redhat, :uid_ems => 'abcdef12-3456-7890-abcd-ef1234567890')
       parser.associate_with_vm(server, server.feed)
       expect(server.lives_on).to eq(vm)
     end
 
     it 'should do nothing if the vm is not there' do
-      allow(collector_double).to receive(:machine_id).and_return(nil)
+      allow(parser).to receive(:machine_id_by_feed).and_return(nil)
       parser.associate_with_vm(server, server.feed)
       expect(server.lives_on).to be_nil
     end
