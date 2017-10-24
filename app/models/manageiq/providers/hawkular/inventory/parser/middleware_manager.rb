@@ -34,7 +34,7 @@ module ManageIQ::Providers
         collector.eaps.each do |eap|
           server = persister.middleware_servers.find_or_build(eap.id)
           parse_middleware_server(eap, server)
-          agent_config = @data_index.fetch_path(:middleware_agent_config, :by_feed, eap.feed)
+          agent_config = agent_config_by_feed(eap.feed)
           ['Immutable', 'In Container'].each do |feature|
             server.properties[feature] = 'true' if agent_config.try(:[], feature) == true
           end
@@ -101,6 +101,14 @@ module ManageIQ::Providers
             server.middleware_server_group = persister.middleware_server_groups.lazy_find(server_group[:ems_ref])
           end
         end
+      end
+
+      def machine_id_by_feed(feed)
+        @data_index.fetch_path(:middleware_os_config, :by_feed, feed).try(:fetch, 'Machine Id')
+      end
+
+      def agent_config_by_feed(feed)
+        @data_index.fetch_path(:middleware_agent_config, :by_feed, feed)
       end
 
       def alternate_machine_id(machine_id)
@@ -213,21 +221,25 @@ module ManageIQ::Providers
       end
 
       def fetch_availabilities_for(resources, collection, metric_type_id)
-        metric_id_to_resource_id = resources.reject { |r| r.metrics_by_type(metric_type_id).empty? }.map do |resource|
-          [resource.metrics_by_type(metric_type_id).first.hawkular_id, resource.id]
-        end.to_h
-        unless metric_id_to_resource_id.empty?
+        metric_id_to_resources = resources.reject { |r| r.metrics_by_type(metric_type_id).empty? }.group_by do |resource|
+          resource.metrics_by_type(metric_type_id).first.hawkular_id
+        end
+        unless metric_id_to_resources.empty?
           found_availabilities = []
-          collector.raw_availability_data(metric_id_to_resource_id.keys, :limit => 1, :order => 'DESC').each do |availability|
-            next unless metric_id_to_resource_id.key?(availability['id'])
-            resource = collection.find_by(:ems_ref => metric_id_to_resource_id.fetch(availability['id']))
-            found_availabilities << resource.ems_ref
-            yield(resource, availability)
+          collector.raw_availability_data(metric_id_to_resources.keys, :limit => 1, :order => 'DESC').each do |availability|
+            next unless metric_id_to_resources.key?(availability['id'])
+            found_availabilities << availability['id']
+            metric_id_to_resources.fetch(availability['id']).each do |hawkular_resource|
+              resource = collection.find_by(:ems_ref => hawkular_resource.id)
+              yield(resource, availability)
+            end
           end
           # Provide means to notify if there is a resource without the avail metric
-          ems_ref_of_unknown_avail = metric_id_to_resource_id.values.to_set.subtract(found_availabilities).to_a
-          ems_ref_of_unknown_avail.each do |resource_ems_ref|
-            yield(collection.find_by(:ems_ref => resource_ems_ref), nil)
+          ems_ref_of_unknown_avail = metric_id_to_resources.keys.to_set.subtract(found_availabilities).to_a
+          ems_ref_of_unknown_avail.each do |availability_id|
+            metric_id_to_resources.fetch(availability_id).each do |hawkular_resource|
+              yield(collection.find_by(:ems_ref => hawkular_resource.id), nil)
+            end
           end
         end
       end
@@ -331,7 +343,7 @@ module ManageIQ::Providers
 
       def associate_with_vm(server, feed)
         # Add the association to vm instance if there is any
-        machine_id = @data_index.fetch_path(:middleware_os_config, :by_feed, feed).try(:fetch, 'Machine Id')
+        machine_id =  machine_id_by_feed(feed)
         host_instance = find_host_by_bios_uuid(machine_id) ||
                         find_host_by_bios_uuid(alternate_machine_id(machine_id)) ||
                         find_host_by_bios_uuid(dashed_machine_id(machine_id))
