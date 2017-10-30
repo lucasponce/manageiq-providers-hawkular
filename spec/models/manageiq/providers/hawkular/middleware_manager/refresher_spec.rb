@@ -43,9 +43,9 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
       'Availability'            => 'up',
       'Calculated Server State' => 'running'
     )
-    assert_specific_datasource(@ems_hawkular, "#{the_feed_id}~Local~/subsystem=datasources/data-source=ExampleDS")
+    assert_specific_datasource(@ems_hawkular, "#{the_feed_id}~Local DMR~/subsystem=datasources/data-source=ExampleDS")
     assert_specific_datasource(@ems_hawkular,
-                               "#{the_feed_id}~Domain~/host=master/server=server-one/subsystem=datasources/data-source=ExampleDS")
+                               "#{the_domain_feed_id}~Local DMR~/host=master/server=server-one/subsystem=datasources/data-source=ExampleDS")
     assert_specific_server_group(domain)
     assert_specific_domain_server
     assert_specific_domain
@@ -63,9 +63,9 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
   end
 
   def assert_specific_domain
-    domain = @ems_hawkular.middleware_domains.find_by(:feed => '1aae80bd1d13')
+    domain = @ems_hawkular.middleware_domains.find_by(:feed => the_domain_feed_id)
     expect(domain.name).to eq('master')
-    expect(domain.nativeid).to eq("#{the_feed_id}~Domain~/host=master")
+    expect(domain.nativeid).to eq("#{the_domain_feed_id}~Local DMR~/host=master")
     expect(domain.properties).not_to be_nil
     expect(domain.properties).to include(
       'Running Mode'         => 'NORMAL',
@@ -77,7 +77,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
   def assert_specific_server_group(domain)
     server_group = domain.middleware_server_groups.find_by(:name => 'main-server-group')
     expect(server_group.name).to eq('main-server-group')
-    expect(server_group.nativeid).to eq("#{the_feed_id}~Domain~/server-group=main-server-group")
+    expect(server_group.nativeid).to eq("#{the_domain_feed_id}~Local DMR~/server-group=main-server-group")
     expect(server_group.profile).to eq('full')
     expect(server_group.properties).not_to be_nil
     expect(server_group.middleware_deployments).to be_empty
@@ -87,7 +87,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
   def assert_specific_domain_server
     server = @ems_hawkular.middleware_servers.find_by(:name => 'server-one')
     expect(server.name).to eq('server-one')
-    expect(server.nativeid).to eq("#{the_domain_feed_id}~Domain~/host=master/server=server-one")
+    expect(server.nativeid).to eq("#{the_domain_feed_id}~Local DMR~/host=master/server=server-one")
     expect(server.product).to eq('WildFly Full')
     expect(server.hostname).to eq(the_domain_feed_id)
     expect(server.properties).not_to be_nil
@@ -96,6 +96,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
   it 'will perform a full refresh on 127.0.0.1 even though the os type is not there yet' do
     # using different cassette that represents the hawkular inventory without the operating system resource type
     # TODO: Make this work with live tests
+    # Perhaps having a separate MW without OS configuration on its config
     VCR.use_cassette(described_class.name.underscore.to_s + '_without_os',
                      :allow_unused_http_interactions => true,
                      :decode_compressed_response     => true,
@@ -112,7 +113,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
     expect(@ems_hawkular2.middleware_deployments).not_to be_empty
     expect(@ems_hawkular2.middleware_datasources).not_to be_empty
     expect(@ems_hawkular2.middleware_messagings).not_to be_empty
-    assert_specific_datasource(@ems_hawkular2, "#{the_feed_id}~Local~/subsystem=datasources/data-source=ExampleDS")
+    assert_specific_datasource(@ems_hawkular2, "1aae80bd1d13~Local~/subsystem=datasources/data-source=ExampleDS")
   end
 
   describe "#preprocess_targets" do

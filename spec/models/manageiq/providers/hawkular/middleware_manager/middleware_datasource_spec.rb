@@ -29,7 +29,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDatasource 
   let(:ds) do
     FactoryGirl.create(:hawkular_middleware_datasource,
                        :name                  => 'ExampleDS',
-                       :ems_ref               => "#{the_feed_id}~Local~/subsystem=datasources/data-source=ExampleDS",
+                       :ems_ref               => "#{the_feed_id}~Local DMR~/subsystem=datasources/data-source=ExampleDS",
                        :ext_management_system => ems_hawkular,
                        :middleware_server     => eap,
                        :properties            => {
