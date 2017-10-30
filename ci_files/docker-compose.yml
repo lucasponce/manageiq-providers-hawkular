@@ -2,8 +2,10 @@ version: '3'
 
 services:
   wildfly-domain:
-    image: hawkular/wildfly-hawkular-agent-domain:latest
+    image: hawkular/wildfly-hawkular-javaagent:latest
     hostname: wf-domain
+    environment:
+      - HAWKULAR_MODE=domain
   wildfly-standalone:
     image: manageiq/wf-standalone:latest
     hostname: wf-standalone

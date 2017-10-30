@@ -23,8 +23,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareServer do
     FactoryGirl.create(:hawkular_middleware_server,
                        :name                  => 'Local',
                        :feed                  => the_feed_id,
-                       :ems_ref               => "#{the_feed_id}~Local~~",
-                       :nativeid              => "#{the_feed_id}~Local~~",
+                       :ems_ref               => "#{the_feed_id}~Local DMR~~",
+                       :nativeid              => "#{the_feed_id}~Local DMR~~",
                        :ext_management_system => ems_hawkular)
   end
 

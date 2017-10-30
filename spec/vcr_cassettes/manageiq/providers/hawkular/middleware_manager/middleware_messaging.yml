@@ -638,88 +638,6 @@ http_interactions:
     http_version: 
   recorded_at: Tue, 24 Oct 2017 17:42:10 GMT
 - request:
-    method: get
-    uri: http://localhost:8080/hawkular/metrics/status
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.0p0
-      Hawkular-Tenant:
-      - hawkular
-      Content-Type:
-      - application/json
-      Authorization:
-      - Basic amRvZTpwYXNzd29yZA==
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Connection:
-      - keep-alive
-      X-Powered-By:
-      - Undertow/1
-      Server:
-      - WildFly/10
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '150'
-      Date:
-      - Tue, 24 Oct 2017 17:42:11 GMT
-    body:
-      encoding: ASCII-8BIT
-      string: '{"MetricsService":"STARTED","Implementation-Version":"0.26.1.Final","Built-From-Git-SHA1":"45b148c834ed62018f153c23187b4436ae4208fe","Cassandra":"up"}'
-    http_version: 
-  recorded_at: Tue, 24 Oct 2017 17:42:11 GMT
-- request:
-    method: get
-    uri: http://localhost:8080/hawkular/metrics/status
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.0p0
-      Hawkular-Tenant:
-      - hawkular
-      Content-Type:
-      - application/json
-      Authorization:
-      - Basic amRvZTpwYXNzd29yZA==
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Connection:
-      - keep-alive
-      X-Powered-By:
-      - Undertow/1
-      Server:
-      - WildFly/10
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '150'
-      Date:
-      - Tue, 24 Oct 2017 17:42:11 GMT
-    body:
-      encoding: ASCII-8BIT
-      string: '{"MetricsService":"STARTED","Implementation-Version":"0.26.1.Final","Built-From-Git-SHA1":"45b148c834ed62018f153c23187b4436ae4208fe","Cassandra":"up"}'
-    http_version: 
-  recorded_at: Tue, 24 Oct 2017 17:42:11 GMT
-- request:
     method: post
     uri: http://localhost:8080/hawkular/metrics/strings/raw/query
     body:
@@ -1174,4 +1092,1137 @@ http_interactions:
         Queue Metrics~Scheduled Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1508861547264,"maxTimestamp":1508866919018}'
     http_version: 
   recorded_at: Tue, 24 Oct 2017 17:42:11 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/counters/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-queue=DLQ%5D~MT~JMS%20Queue%20Metrics~Messages%20Added
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:29 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '254'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Messages Added","dataRetention":14,"type":"counter","tenantId":"hawkular","minTimestamp":1509131652675,"maxTimestamp":1509131774150}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:29 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-queue=DLQ%5D~MT~JMS%20Queue%20Metrics~Message%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:29 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '251'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Message Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652668,"maxTimestamp":1509131773073}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:29 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-queue=DLQ%5D~MT~JMS%20Queue%20Metrics~Delivering%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:29 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '254'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Delivering Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652462,"maxTimestamp":1509131773108}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:29 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-queue=DLQ%5D~MT~JMS%20Queue%20Metrics~Scheduled%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:29 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '253'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Scheduled Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652091,"maxTimestamp":1509131774020}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:29 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-queue=DLQ%5D~MT~JMS%20Queue%20Metrics~Consumer%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:29 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '252'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Consumer Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652492,"maxTimestamp":1509131773148}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:29 GMT
+- request:
+    method: post
+    uri: http://localhost:8080/hawkular/metrics/metrics/stats/query
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"gauge":["MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Message Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Delivering Count"],"counter":["MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Messages Added"],"availability":[]},"start":1476864000000,"end":1476874800001,"bucketDuration":"3600s","types":["gauge","gauge_rate","counter","counter_rate","availability"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '588'
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '2229'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"gauge":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Delivering Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"counter_rate":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Messages Added":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"gauge_rate":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Delivering Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"counter":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Messages Added":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]}}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/inventory/resources/mw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-queue=DLQ/tree
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1931'
+    body:
+      encoding: UTF-8
+      string: '{"id":"mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ","name":"DLQ","feedId":"mw-manager","type":{"id":"JMS
+        Queue","operations":[],"properties":{}},"parentId":"mw-manager~Local~/subsystem=messaging-activemq/server=default","metrics":[{"name":"Messages
+        Added","type":"Messages Added","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS
+        Queue Metrics~Messages Added","hawkular.metric.type":"COUNTER","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Messages Added"}},{"name":"Message Count","type":"Message Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS
+        Queue Metrics~Message Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Message Count"}},{"name":"Delivering Count","type":"Delivering
+        Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS Queue Metrics~Delivering
+        Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Delivering Count"}},{"name":"Scheduled Count","type":"Scheduled
+        Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS Queue Metrics~Scheduled
+        Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Scheduled Count"}},{"name":"Consumer Count","type":"Consumer
+        Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS Queue Metrics~Consumer
+        Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Consumer Count"}}],"properties":{},"config":{},"children":[]}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: post
+    uri: http://localhost:8080/hawkular/metrics/metrics/stats/query
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"gauge":["MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Message Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Delivering Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Scheduled Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Consumer Count"],"counter":["MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Messages Added"],"availability":[]},"start":1476864000000,"end":1476874800001,"bucketDuration":"3600s","types":["gauge","gauge_rate","counter","counter_rate","availability"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '853'
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '3679'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"gauge":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Delivering Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Scheduled Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Consumer Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"counter_rate":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Messages Added":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"gauge_rate":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Delivering Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Scheduled Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Consumer Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"counter":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS
+        Queue Metrics~Messages Added":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]}}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-topic=HawkularAlertData%5D~MT~JMS%20Topic%20Metrics~Durable%20Message%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '273'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Message Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652402,"maxTimestamp":1509131774070}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-topic=HawkularAlertData%5D~MT~JMS%20Topic%20Metrics~Message%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '265'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Message Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652703,"maxTimestamp":1509131774157}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/counters/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-topic=HawkularAlertData%5D~MT~JMS%20Topic%20Metrics~Messages%20Added
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '268'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Messages Added","dataRetention":14,"type":"counter","tenantId":"hawkular","minTimestamp":1509131652712,"maxTimestamp":1509131774158}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-topic=HawkularAlertData%5D~MT~JMS%20Topic%20Metrics~Non-Durable%20Subscription%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '282'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Subscription Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652376,"maxTimestamp":1509131774067}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-topic=HawkularAlertData%5D~MT~JMS%20Topic%20Metrics~Subscription%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '270'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Subscription Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652638,"maxTimestamp":1509131774141}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-topic=HawkularAlertData%5D~MT~JMS%20Topic%20Metrics~Delivering%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '268'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Delivering Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652578,"maxTimestamp":1509131774128}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-topic=HawkularAlertData%5D~MT~JMS%20Topic%20Metrics~Durable%20Subscription%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '278'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Subscription Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652582,"maxTimestamp":1509131774129}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bmw-manager%2Fmw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-topic=HawkularAlertData%5D~MT~JMS%20Topic%20Metrics~Non-Durable%20Message%20Count
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:30 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '277'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Message Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1509131652210,"maxTimestamp":1509131774033}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:30 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '150'
+      Date:
+      - Fri, 27 Oct 2017 19:16:31 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: '{"MetricsService":"STARTED","Implementation-Version":"0.26.1.Final","Built-From-Git-SHA1":"45b148c834ed62018f153c23187b4436ae4208fe","Cassandra":"up"}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:31 GMT
+- request:
+    method: post
+    uri: http://localhost:8080/hawkular/metrics/metrics/stats/query
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"gauge":["MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Message Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Message Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Subscription Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Subscription Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Delivering Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Subscription Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Message Count"],"counter":["MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Messages Added"],"availability":[]},"start":1476864000000,"end":1476874800001,"bucketDuration":"3600s","types":["gauge","gauge_rate","counter","counter_rate","availability"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1410'
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:31 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '6173'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"gauge":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Subscription Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Delivering Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Subscription Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Subscription Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"counter_rate":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Messages Added":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"gauge_rate":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Subscription Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Delivering Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Subscription Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Subscription Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"counter":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Messages Added":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]}}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:31 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/metrics/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '150'
+      Date:
+      - Fri, 27 Oct 2017 19:16:31 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: '{"MetricsService":"STARTED","Implementation-Version":"0.26.1.Final","Built-From-Git-SHA1":"45b148c834ed62018f153c23187b4436ae4208fe","Cassandra":"up"}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:31 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/inventory/status
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '173'
+      Date:
+      - Fri, 27 Oct 2017 19:16:31 GMT
+    body:
+      encoding: UTF-8
+      string: '{"Implementation-Version":"0.9.8.Final-SRC-revision-ce866b1ade2d7413f055f461eb36d004ff2888d8","Built-From-Git-SHA1":"ce866b1ade2d7413f055f461eb36d004ff2888d8","status":"UP"}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:31 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/inventory/resources/mw-manager~Local~%2Fsubsystem=messaging-activemq%2Fserver=default%2Fjms-topic=HawkularAlertData/tree
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:31 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '3236'
+    body:
+      encoding: UTF-8
+      string: '{"id":"mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData","name":"HawkularAlertData","feedId":"mw-manager","type":{"id":"JMS
+        Topic","operations":[],"properties":{}},"parentId":"mw-manager~Local~/subsystem=messaging-activemq/server=default","metrics":[{"name":"Durable
+        Message Count","type":"Durable Message Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS
+        Topic Metrics~Durable Message Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Message Count"}},{"name":"Message Count","type":"Message
+        Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS Topic Metrics~Message
+        Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Message Count"}},{"name":"Messages Added","type":"Messages Added","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS
+        Topic Metrics~Messages Added","hawkular.metric.type":"COUNTER","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Messages Added"}},{"name":"Non-Durable Subscription Count","type":"Non-Durable
+        Subscription Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS
+        Topic Metrics~Non-Durable Subscription Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Subscription Count"}},{"name":"Subscription Count","type":"Subscription
+        Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS Topic Metrics~Subscription
+        Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Subscription Count"}},{"name":"Delivering Count","type":"Delivering
+        Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS Topic Metrics~Delivering
+        Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Delivering Count"}},{"name":"Durable Subscription Count","type":"Durable
+        Subscription Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS
+        Topic Metrics~Durable Subscription Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Subscription Count"}},{"name":"Non-Durable Message Count","type":"Non-Durable
+        Message Count","unit":"NONE","properties":{"hawkular.metric.typeId":"JMS Topic
+        Metrics~Non-Durable Message Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Non-Durable Message Count"}}],"properties":{},"config":{},"children":[]}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:31 GMT
+- request:
+    method: post
+    uri: http://localhost:8080/hawkular/metrics/metrics/stats/query
+    body:
+      encoding: UTF-8
+      string: '{"metrics":{"gauge":["MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Message Count","MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Message Count"],"counter":["MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Messages Added"],"availability":[]},"start":1476864000000,"end":1476874800001,"bucketDuration":"3600s","types":["gauge","gauge_rate","counter","counter_rate","availability"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '635'
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - '0'
+      Cache-Control:
+      - no-cache, no-store, must-revalidate
+      X-Powered-By:
+      - Undertow/1
+      Server:
+      - WildFly/10
+      Pragma:
+      - no-cache
+      Date:
+      - Fri, 27 Oct 2017 19:16:31 GMT
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '2323'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"gauge":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"counter_rate":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Messages Added":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"gauge_rate":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Durable Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Message Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"counter":{"MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS
+        Topic Metrics~Messages Added":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]}}'
+    http_version: 
+  recorded_at: Fri, 27 Oct 2017 19:16:31 GMT
 recorded_with: VCR 3.0.3
