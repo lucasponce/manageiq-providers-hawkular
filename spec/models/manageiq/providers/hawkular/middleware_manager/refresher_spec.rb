@@ -99,8 +99,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
     # Perhaps having a separate MW without OS configuration on its config
     VCR.use_cassette(described_class.name.underscore.to_s + '_without_os',
                      :allow_unused_http_interactions => true,
-                     :decode_compressed_response     => true,
-                     :record                         => :none) do
+                     :decode_compressed_response     => true) do
       EmsRefresh.refresh(@ems_hawkular2)
     end
 
@@ -113,7 +112,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
     expect(@ems_hawkular2.middleware_deployments).not_to be_empty
     expect(@ems_hawkular2.middleware_datasources).not_to be_empty
     expect(@ems_hawkular2.middleware_messagings).not_to be_empty
-    assert_specific_datasource(@ems_hawkular2, "1aae80bd1d13~Local~/subsystem=datasources/data-source=ExampleDS")
+    assert_specific_datasource(@ems_hawkular2, "#{the_feed_id}~Local DMR~/subsystem=datasources/data-source=ExampleDS")
   end
 
   describe "#preprocess_targets" do

@@ -32,6 +32,18 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
       }
     }
   end
+  let(:domain_availability_metric) do
+    {
+      'name'       => 'm1',
+      'type'       => 'Domain Availability',
+      'unit'       => 'BYTES',
+      'properties' => {
+        'hawkular.metric.typeId' => 't1',
+        'hawkular.metric.type'   => 'unit1',
+        'hawkular.metric.id'     => 'm1'
+      }
+    }
+  end
   let(:deployment_resource) do
     ::Hawkular::Inventory::Resource.new(
       'id'      => 'r1',
@@ -54,7 +66,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
   end
   let(:domain_resource) do
     ::Hawkular::Inventory::Resource.new(
-      'id'      => 'server_id',
+      'id'      => 'domain_id',
       'name'    => 'bar',
       'type'    => {
         'id' => 'Domain Host'
@@ -72,7 +84,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
             'hawkular.metric.type'   => 'unit1',
             'hawkular.metric.id'     => 'mt1'
           }
-        }
+        },
+        domain_availability_metric
       ]
     )
   end
@@ -204,8 +217,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
     end
 
     before do
-      allow(stubbed_inventory_client).to receive(:get_resource)
-        .with(db_server.ems_ref, true)
+      allow(stubbed_inventory_client).to receive(:resource)
+        .with(db_server.ems_ref)
         .and_return(server_resource)
     end
 
@@ -355,7 +368,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
     let!(:db_domain) do
       ems_hawkular.middleware_domains.create(
         :feed       => 'f1',
-        :ems_ref    => '/t;hawkular/f;f1/r;resource1',
+        :ems_ref    => 'domain_id',
         :properties => {
           'Server State' => 'down',
           'Availability' => 'Stopped',
@@ -363,7 +376,17 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream 
       )
     end
 
+    before do
+      allow(stubbed_inventory_client).to receive(:resource)
+        .with(db_domain.ems_ref)
+        .and_return(domain_resource)
+    end
+
     it "returns updated status for domain whose availability has changed" do
+      # Set-up
+      db_domain.properties = nil
+      db_domain.save!
+
       updates = subject.send(:fetch_availabilities)
 
       expect(updates).to eq(

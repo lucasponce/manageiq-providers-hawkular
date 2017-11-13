@@ -281,33 +281,34 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
         -> { ::ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDomain }
       )
 
+      allow(collector_double).to receive(:domains).and_return([])
       allow(persister_double).to receive(:middleware_domains).and_return(domains_collection)
       allow(parser).to receive(:fetch_availabilities_for)
         .and_yield(domain, stubbed_metric_data)
     end
 
     it 'uses fetch_availabilities_for to fetch domain availabilities' do
-      parser.fetch_domain_availabilities(%w(f1))
+      parser.fetch_domain_availabilities
       expect(parser).to have_received(:fetch_availabilities_for)
-        .with(%w(f1), [domain], 'Domain%20Availability~Domain%20Availability')
+        .with([], [domain], 'Domain Availability')
     end
 
     it 'assigns enabled status to a domain with "up" metric' do
       stubbed_metric_data.data.first['value'] = 'up'
 
-      parser.fetch_domain_availabilities(%w(f1))
+      parser.fetch_domain_availabilities
       expect(domain.properties).to include('Availability' => 'Running')
     end
 
     it 'assigns disabled status to a domain with "down" metric' do
       stubbed_metric_data.data.first['value'] = 'down'
 
-      parser.fetch_domain_availabilities(%w(f1))
+      parser.fetch_domain_availabilities
       expect(domain.properties).to include('Availability' => 'Stopped')
     end
 
     it 'assigns unknown status to a domain whose metric is something else than "up" or "down"' do
-      parser.fetch_domain_availabilities(%w(f1))
+      parser.fetch_domain_availabilities
       expect(domain.properties).to include('Availability' => 'Unknown')
     end
 
@@ -315,7 +316,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
       allow(parser).to receive(:fetch_availabilities_for)
         .and_yield(domain, nil)
 
-      parser.fetch_domain_availabilities(%w(f1))
+      parser.fetch_domain_availabilities
       expect(domain.properties).to include('Availability' => 'Unknown')
     end
   end
