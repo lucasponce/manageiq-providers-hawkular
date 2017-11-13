@@ -14,8 +14,8 @@ module ManageIQ::Providers
     end
 
     def fetch_metrics_available
-      resource = @included_children ? @ems.resource(@target.ems_ref) : @ems.resource_tree(@target.ems_ref)
-      resource.metrics(@included_children)
+      resource = @included_children ? @ems.resource_tree(@target.ems_ref) : @ems.resource(@target.ems_ref)
+      resource.metrics(!!@included_children)
               .select { |m| @supported_metrics.key?(m.hawkular_type_id) }.collect do |metric|
         parse_metric(metric)
       end

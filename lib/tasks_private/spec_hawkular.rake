@@ -95,7 +95,7 @@ module ManageIQ::Providers::Hawkular::TaskHelpers
       feeds_to_test = ['mw-manager', 'wf-standalone', 'wf-domain']
 
       client = hawkular_client.inventory
-      wait_until_ready(feeds_to_test) { |feed| client.root_resources.map(&:feed).include? feed }
+      wait_until_ready(feeds_to_test) { |feed| client.root_resources.map(&:feed).include?(feed) }
     end
 
     def self.wait_for_metrics_data
