@@ -69,7 +69,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
       )
     end
 
-    before(:all) do
+    before(:each) do
       MiqServer.seed
       NotificationType.seed
     end
