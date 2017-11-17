@@ -36,10 +36,10 @@ module ManageIQ::Providers
           parse_middleware_server(eap, server)
           agent_config = agent_config_by_feed(eap.feed)
           ['Immutable', 'In Container'].each do |feature|
-            server.properties[feature] = 'true' if agent_config.try(:[], feature) == true
+            server.properties[feature] = 'true' if agent_config.try(:[], feature) == 'true'
           end
           if server.properties['In Container'] == 'true'
-            container_id = collector.container_id(eap.feed)['Container Id']
+            container_id = container_id_by_feed(eap.feed)
             if container_id
               backing_ref = 'docker://' + container_id
               container = Container.find_by(:backing_ref => backing_ref)
@@ -105,6 +105,10 @@ module ManageIQ::Providers
 
       def machine_id_by_feed(feed)
         @data_index.fetch_path(:middleware_os_config, :by_feed, feed).try(:fetch, 'Machine Id')
+      end
+
+      def container_id_by_feed(feed)
+        @data_index.fetch_path(:middleware_os_config, :by_feed, feed).try(:fetch, 'Container Id')
       end
 
       def agent_config_by_feed(feed)
