@@ -68,7 +68,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareManager do
         'Name'                 => 'master',
       }
       type_id = 'Host Controller'
-      feed = 'master.Unnamed%20Domain'
+      feed = the_domain_feed_id
       id = 'domain_id'
       name = 'Unnamed Domain'
       type = OpenStruct.new(:id => type_id)
