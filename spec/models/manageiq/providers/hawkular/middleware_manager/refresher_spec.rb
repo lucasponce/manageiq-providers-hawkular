@@ -99,7 +99,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
     # Perhaps having a separate MW without OS configuration on its config
     VCR.use_cassette(described_class.name.underscore.to_s + '_without_os',
                      :allow_unused_http_interactions => true,
-                     :decode_compressed_response     => true) do
+                     :decode_compressed_response     => true,
+                     :record                         => :none) do
       EmsRefresh.refresh(@ems_hawkular2)
     end
 
