@@ -69,7 +69,7 @@
   :worker_base:
     :event_catcher:
       :event_catcher_hawkular:
-        :poll: 10.seconds
+        :poll: 1.minute
       :event_catcher_hawkular_datawarehouse:
         :alertable_tenants: ['_system', '_ops']
         :poll: 1.minute

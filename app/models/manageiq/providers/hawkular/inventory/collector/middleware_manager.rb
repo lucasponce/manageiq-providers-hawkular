@@ -4,6 +4,8 @@ module ManageIQ::Providers
   class Hawkular::Inventory::Collector::MiddlewareManager < ManagerRefresh::Inventory::Collector
     include ::Hawkular::ClientUtils
 
+    SUPPORTED_VERSIONS = %w(WF10 EAP6).freeze
+
     def connection
       @connection ||= manager.connect
     end
@@ -13,55 +15,100 @@ module ManageIQ::Providers
     end
 
     def oss
-      resources_for('Platform_Operating System')
+      oss = []
+      SUPPORTED_VERSIONS.each do |type|
+        oss.concat(resources_for("Platform_Operating System #{type}"))
+      end
+      oss
     end
 
     def agents
-      resources_for('Hawkular WildFly Agent')
+      agents = []
+      SUPPORTED_VERSIONS.each do |type|
+        oss.concat(resources_for("Hawkular Java Agent #{type}"))
+      end
+      agents
     end
 
     def eaps
-      resources_for('WildFly Server')
+      eaps = []
+      SUPPORTED_VERSIONS.each do |type|
+        eaps.concat(resources_for("WildFly Server #{type}"))
+      end
+      eaps
     end
 
     def domain_servers
-      resources_for('Domain WildFly Server')
+      domains = []
+      SUPPORTED_VERSIONS.each do |type|
+        domains.concat(resources_for("Domain WildFly Server #{type}"))
+      end
+      domains
     end
 
     def deployments
-      resources_for('Deployment')
+      deployments = []
+      SUPPORTED_VERSIONS.each do |type|
+        deployments.concat(resources_for("Deployment #{type}"))
+      end
+      deployments
     end
 
     def subdeployments
-      resources_for('SubDeployment')
+      subdeployments = []
+      SUPPORTED_VERSIONS.each do |type|
+        subdeployments.concat(resources_for("SubDeployment #{type}"))
+      end
+      subdeployments
     end
 
     def host_controllers
-      resources_for('Host Controller')
+      host_controllers = []
+      SUPPORTED_VERSIONS.each do |type|
+        host_controllers.concat(resources_for("Host Controller #{type}"))
+      end
+      host_controllers
     end
 
     def domains
-      select_domain_controllers(resources_for('Domain Host'))
+      domains = []
+      SUPPORTED_VERSIONS.each do |type|
+        domains.concat(resources_for("Domain Host #{type}"))
+      end
+      domains
     end
 
     def domains_from_host_controller(host_controller)
-      select_domain_controllers(host_controller.children_by_type('Domain Host'))
+      domains_from_host_controller = []
+      SUPPORTED_VERSIONS.each do |type|
+        domains_from_host_controller
+            .concat(select_domain_controllers(host_controller.children_by_type("Domain Host #{type}")))
+      end
+      domains_from_host_controller
     end
 
     def server_groups_from_host_controller(host_controller)
-      host_controller.children_by_type('Domain Server Group')
+      server_groups = []
+      SUPPORTED_VERSIONS.each do |type|
+        server_groups.concat(host_controller.children_by_type("Domain Server Group #{type}"))
+      end
+      server_groups
     end
 
     def domain_servers_from_host_controller(host_controller)
-      host_controller.children_by_type('Domain WildFly Server', true)
+      domain_servers = []
+      SUPPORTED_VERSIONS.each do |type|
+        domain_servers.concat(host_controller.children_by_type("Domain WildFly Server #{type}", true))
+      end
+      domain_servers
     end
 
     def child_resources(resource_id, recursive = false)
       manager.child_resources(resource_id, recursive)
     end
 
-    def raw_availability_data(*args)
-      connection.metrics.avail.raw_data(*args)
+    def raw_availability_data(metrics, time)
+      connection.prometheus.query(:metrics => metrics, :time => time)
     end
 
     private

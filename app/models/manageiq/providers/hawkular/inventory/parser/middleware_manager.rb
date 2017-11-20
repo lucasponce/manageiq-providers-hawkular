@@ -2,13 +2,30 @@ module ManageIQ::Providers
   module Hawkular
     class Inventory::Parser::MiddlewareManager < ManagerRefresh::Inventory::Parser
       include ::Hawkular::ClientUtils
+      include Vmdb::Logging
+
+      SUPPORTED_VERSIONS = %w(WF10 EAP6).freeze
+      SUPPORTED_ENTITIES = ['Deployment', 'SubDeployment', 'Datasource', 'JMS Queue', 'JMS Topic'].freeze
 
       def initialize
         super
         @data_index = {}
+        @supported_types = []
+        @supported_deployments = []
+        @supported_datasources = []
+        SUPPORTED_VERSIONS.each do |version|
+          SUPPORTED_ENTITIES.each do |entity|
+            @supported_types << "#{entity} #{version}"
+          end
+          %w(Deployment SubDeployment).each do |deployment|
+            @supported_deployments << "#{deployment} #{version}"
+          end
+          @supported_datasources << "Datasource #{version}"
+        end
       end
 
       def parse
+        _log.info("DELETEME parse")
         # the order of the method calls is important here, because they make use of @data_index
         fetch_oss_configuration
         fetch_agents_configuration
@@ -175,13 +192,14 @@ module ManageIQ::Providers
         persister.middleware_servers.each do |eap|
           eap_tree = collector.resource_tree(eap.ems_ref)
           eap_tree.children(true).each do |child|
-            next unless ['Deployment', 'SubDeployment', 'Datasource', 'JMS Queue', 'JMS Topic'].include?(child.type.id)
+            next unless @supported_types.include?(child.type.id)
             process_server_entity(eap, child)
           end
         end
       end
 
       def fetch_availability
+        _log.info("DELETEME fetch_availability")
         fetch_deployment_availabilities
         fetch_server_availabilities(collector.eaps)
         fetch_server_availabilities(collector.domain_servers)
@@ -189,9 +207,18 @@ module ManageIQ::Providers
       end
 
       def fetch_deployment_availabilities
+        collected_deployments = collector.deployments
         collection = persister.middleware_deployments
-        fetch_availabilities_for(collector.deployments, collection, collection.model_class::AVAIL_TYPE_ID) do |deployment, availability|
-          deployment.status = process_deployment_availability(availability.try(:[], 'data').try(:first))
+        return if collected_deployments.empty? || collection.data.empty?
+        _log.info("DELETEME fetch_deployment_availabilities collected_deployments #{collected_deployments}")
+        _log.info("DELETEME fetch_deployment_availabilities collection #{collection}")
+        _log.info("DELETEME fetch_deployment_availabilities collection.first #{collection.data.first}")
+        metric_name = collection.data.first.model_class::AVAIL_TYPE_ID
+        fetch_availabilities_for(collected_deployments,
+                                 collection,
+                                 metric_name) do |deployment, availability|
+          deployment.status = process_deployment_availability(availability)
+          _log.info("DELETEME deployment.status #{deployment.status}")
         end
         subdeployments_by_deployment_id = collector.subdeployments.group_by(&:parent_id)
         subdeployments_by_deployment_id.keys.each do |parent_id|
@@ -203,52 +230,57 @@ module ManageIQ::Providers
         end
       end
 
-      def fetch_server_availabilities(servers)
+      def fetch_server_availabilities(collected_servers)
         collection = persister.middleware_servers
-        fetch_availabilities_for(servers, collection, collection.model_class::AVAIL_TYPE_ID) do |server, availability|
-          props = server.properties
-          props['Availability'], props['Calculated Server State'] =
-            process_server_availability(props['Server State'], availability.try(:[], 'data').try(:first))
-        end
+        return if collected_servers.empty? || collection.data.empty?
+        metric_name = collection.data.first.model_class::AVAIL_TYPE_ID
+        _log.info("DELETEME fetch_server_availabilities #{collected_servers}")
+        _log.info("DELETEME fetch_server_availabilities #{collection}")
+        fetch_availabilities_for(collected_servers,
+                                 collection,
+                                 metric_name) do |server, availability|
+           props = server.properties
+           props['Availability'], props['Calculated Server State'] =
+             process_server_availability(props['Server State'], availability)
+           ## TODO Check if Calculated Server State needs additional logic
+           server.properties['Calculated Server State'] = server.properties['Availability']
+           _log.info("DELETEME server.properties #{server.properties}")
+         end
       end
 
       def fetch_domain_availabilities
+        collected_domains = collector.domains
         collection = persister.middleware_domains
-        fetch_availabilities_for(collector.domains, collection, collection.model_class::AVAIL_TYPE_ID) do |domain, availability|
-          domain.properties['Availability'] =
-            process_domain_availability(availability.try(:[], 'data').try(:first))
+        return if collected_domains.empty? || collection.data.empty?
+        metric_name = collection.data.first.model_class::AVAIL_TYPE_ID
+        _log.info("DELETEME fetch_domain_availabilities #{collected_domains}")
+        _log.info("DELETEME fetch_domain_availabilities #{collection}")
+        fetch_availabilities_for(collected_domains,
+                                 collection,
+                                 metric_name) do |domain, availability|
+          domain.properties['Availability'] = process_domain_availability(availability)
+          _log.info("DELETEME domain.properties #{domain.properties}")
         end
       end
 
-      def fetch_availabilities_for(resources, collection, metric_type_id)
-        metric_id_to_resources = resources.reject { |r| r.metrics_by_type(metric_type_id).empty? }.group_by do |resource|
-          resource.metrics_by_type(metric_type_id).first.hawkular_id
-        end
-        unless metric_id_to_resources.empty?
-          found_availabilities = []
-          collector.raw_availability_data(metric_id_to_resources.keys, :limit => 1, :order => 'DESC').each do |availability|
-            next unless metric_id_to_resources.key?(availability['id'])
-            found_availabilities << availability['id']
-            metric_id_to_resources.fetch(availability['id']).each do |hawkular_resource|
-              resource = collection.find_by(:ems_ref => hawkular_resource.id)
-              yield(resource, availability)
-            end
+      def fetch_availabilities_for(inventory_entities, entities, metric_name)
+        inventory_entities.each do |inventory_entity|
+          entity = entities.find_by(:ems_ref => inventory_entity.id)
+          availability = nil
+          availability_metric = filter_metric(inventory_entity, metric_name)
+          if availability_metric
+            availability = collector.raw_availability_data([availability_metric.to_h], Time.now.to_i)
+            _log.info("DELETEME fetch_availabilities_for availability #{availability}")
           end
-          # Provide means to notify if there is a resource without the avail metric
-          ems_ref_of_unknown_avail = metric_id_to_resources.keys.to_set.subtract(found_availabilities).to_a
-          ems_ref_of_unknown_avail.each do |availability_id|
-            metric_id_to_resources.fetch(availability_id).each do |hawkular_resource|
-              yield(collection.find_by(:ems_ref => hawkular_resource.id), nil)
-            end
-          end
+          yield(entity, availability)
         end
       end
 
       def process_server_entity(server, entity)
-        if %w(Deployment SubDeployment).include?(entity.type.id)
+        if @supported_deployments.include?(entity.type.id)
           inventory_object = persister.middleware_deployments.find_or_build(entity.id)
           parse_deployment(entity, inventory_object)
-        elsif entity.type.id == 'Datasource'
+        elsif @supported_datasources.include?(entity.type.id)
           inventory_object = persister.middleware_datasources.find_or_build(entity.id)
           parse_datasource(entity, inventory_object)
         else
@@ -261,20 +293,28 @@ module ManageIQ::Providers
       end
 
       def process_server_availability(server_state, availability = nil)
-        avail = availability.try(:[], 'value') || 'unknown'
-        [avail, avail == 'up' ? server_state : avail]
+        avail = if availability.first['value'] && availability.first['value'][1] == '1'
+                  'Running'
+                else
+                  'STOPPED'
+                end
+        [avail, avail == 'Running' ? server_state : avail]
       end
 
       def process_deployment_availability(availability = nil)
-        process_availability(availability, 'up' => 'Enabled', 'down' => 'Disabled')
+        if availability.first['value'] && availability.first['value'][1] == '1'
+          'Enabled'
+        else
+          'Disabled'
+        end
       end
 
       def process_domain_availability(availability = nil)
-        process_availability(availability, 'up' => 'Running', 'down' => 'Stopped')
-      end
-
-      def process_availability(availability, translation = {})
-        translation.fetch(availability.try(:[], 'value').try(:downcase), 'Unknown')
+        if availability.first['value'] && availability.first['value'][1] == '1'
+          'Running'
+        else
+          'STOPPED'
+        end
       end
 
       def parse_deployment(deployment, inventory_object)
@@ -356,6 +396,16 @@ module ManageIQ::Providers
         inventory_object.nativeid = item.id
         inventory_object[:properties] = item.config if item.respond_to?(:config)
         inventory_object[:feed] = item.feed if item.respond_to?(:feed)
+      end
+
+      def filter_metric(inventory_item, metric_name)
+        selected_metric = nil
+        inventory_item.metrics.each do |metric|
+          next unless metric.name.eql?(metric_name)
+          selected_metric = metric
+          break
+        end
+        selected_metric
       end
     end
   end

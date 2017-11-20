@@ -2,7 +2,7 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
   def initialize(ems)
     @ems               = ems
     @alerts_client     = ems.alerts_client
-    @metrics_client    = ems.metrics_client
+    @prometheus_client = ems.prometheus_client
     @inventory_client  = ems.inventory_client
     @collecting_events = false
   end
@@ -127,9 +127,10 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
 
     # Get availabilities
     avails = {}
-    parser.fetch_availabilities_for(inventory_entities, entities, entities.first.class::AVAIL_TYPE_ID) do |item, avail|
-      avail_data = avail.try(:[], 'data').try(:first)
-      avails[item.id] = yield(item, avail_data)
+    parser.fetch_availabilities_for(inventory_entities,
+                                    entities,
+                                    entities.first.class::AVAIL_TYPE_ID) do |item, avail|
+      avails[item.id] = yield(item, avail)
 
       # Filter out if availability is unchanged. This way, no refresh is triggered if unnecessary.
       avails.delete(item.id) unless avails[item.id]

@@ -54,7 +54,7 @@ module ManageIQ::Providers
       begin
         # As the connect will only give a handle
         # we verify the credentials via an actual operation
-        connect(options).inventory.list_feeds
+        connect(options).inventory.root_resources
       rescue URI::InvalidComponentError
         raise MiqException::MiqHostError, "Host '#{hostname}' is invalid"
       rescue ::Hawkular::ConnectionException
@@ -149,8 +149,8 @@ module ManageIQ::Providers
       end
     end
 
-    def metrics_client
-      with_provider_connection(&:metrics)
+    def prometheus_client
+      with_provider_connection(&:prometheus)
     end
 
     def inventory_client

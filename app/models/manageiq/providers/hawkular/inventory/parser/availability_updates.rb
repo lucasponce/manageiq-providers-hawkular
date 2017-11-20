@@ -1,5 +1,7 @@
 module ManageIQ::Providers
   class Hawkular::Inventory::Parser::AvailabilityUpdates < ManagerRefresh::Inventory::Parser
+    include Vmdb::Logging
+
     def parse
       fetch_server_availabilities
       fetch_deployment_availabilities
@@ -16,18 +18,21 @@ module ManageIQ::Providers
     end
 
     def fetch_server_availabilities
+      _log.info("DELETEME fetch_server_availabilities")
       find_updated_resource(:server) do |server, item|
         server.properties = item.options
       end
     end
 
     def fetch_deployment_availabilities
+      _log.info("DELETEME fetch_deployment_availabilities")
       find_updated_resource(:deployment) do |deployment, item|
         deployment.status = item.options[:status]
       end
     end
 
     def fetch_domain_availabilities
+      _log.info("DELETEME fetch_deployment_availabilities")
       find_updated_resource(:domain) do |domain, item|
         domain.properties = item.options
       end
