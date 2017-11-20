@@ -1,5 +1,7 @@
 module ManageIQ::Providers
   class Hawkular::Inventory::Parser::AvailabilityUpdates < ManagerRefresh::Inventory::Parser
+    include Vmdb::Logging
+
     def parse
       fetch_server_availabilities
       fetch_deployment_availabilities

@@ -1,5 +1,7 @@
 module ManageIQ::Providers
   class Hawkular::MiddlewareManager::MiddlewareServer < MiddlewareServer
+    include ManageIQ::Providers::Hawkular::MiddlewareManager::LiveMetricsCaptureMixin
+
     AVAIL_TYPE_ID = 'Server Availability'.freeze
 
     has_many :middleware_diagnostic_reports, :dependent => :destroy
