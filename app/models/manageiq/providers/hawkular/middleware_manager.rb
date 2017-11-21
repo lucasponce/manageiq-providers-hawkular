@@ -3,6 +3,7 @@
 module ManageIQ::Providers
   class Hawkular::MiddlewareManager < ManageIQ::Providers::MiddlewareManager
     require 'hawkular/hawkular_client'
+    require 'hawkular_monkey_patches.rb'
 
     require_nested :AlertManager
     require_nested :AlertProfileManager

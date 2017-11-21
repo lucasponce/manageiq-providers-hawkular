@@ -41,19 +41,7 @@ module ManageIQ::Providers
     end
 
     def domains
-      select_domain_controllers(resources_for('Domain Host'))
-    end
-
-    def domains_from_host_controller(host_controller)
-      select_domain_controllers(host_controller.children_by_type('Domain Host'))
-    end
-
-    def server_groups_from_host_controller(host_controller)
-      host_controller.children_by_type('Domain Server Group')
-    end
-
-    def domain_servers_from_host_controller(host_controller)
-      host_controller.children_by_type('Domain WildFly Server', true)
+      resources_for('Domain Host').select(&:domain_controller?)
     end
 
     def child_resources(resource_id, recursive = false)
@@ -70,8 +58,5 @@ module ManageIQ::Providers
       connection.inventory.resources_for_type(resource_type)
     end
 
-    def select_domain_controllers(domains)
-      domains.select { |host| host.config['Is Domain Controller'] == 'true' }
-    end
   end
 end

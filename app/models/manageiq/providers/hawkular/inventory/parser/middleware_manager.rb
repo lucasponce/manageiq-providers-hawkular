@@ -59,7 +59,7 @@ module ManageIQ::Providers
       def fetch_domains_with_servers
         collector.host_controllers.each do |host_controller|
           host_controller = collector.resource_tree(host_controller.id)
-          collector.domains_from_host_controller(host_controller).each do |domain|
+          host_controller.children_domain_hosts.each do |domain|
             parsed_domain = persister.middleware_domains.find_or_build(domain.id)
             parse_middleware_domain(domain, parsed_domain)
 
@@ -73,7 +73,7 @@ module ManageIQ::Providers
       end
 
       def fetch_server_groups(parsed_domain, host_controller)
-        collector.server_groups_from_host_controller(host_controller).map do |group|
+        host_controller.children_server_groups.map do |group|
           parsed_group = persister.middleware_server_groups.find_or_build(group.id)
           parse_middleware_server_group(group, parsed_group)
           # TODO: remove this index. Two options for this: 1) try to find or build the ems_ref
@@ -87,7 +87,7 @@ module ManageIQ::Providers
       end
 
       def fetch_domain_servers(host_controller)
-        collector.domain_servers_from_host_controller(host_controller).each do |domain_server|
+        host_controller.children_domain_servers(true).each do |domain_server|
           server = persister.middleware_servers.find_or_build(domain_server.id)
           parse_middleware_server(domain_server, server, true)
 
