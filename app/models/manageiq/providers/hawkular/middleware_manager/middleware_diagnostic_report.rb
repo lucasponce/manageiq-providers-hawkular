@@ -51,7 +51,7 @@ module ManageIQ::Providers
 
       @connection = ext_management_system.connect.operations(true)
       @finish_signal = Queue.new
-      @connection.export_jdr(middleware_server.ems_ref, true, &callback)
+      @connection.export_jdr(middleware_server.ems_ref, middleware_server.feed, true, &callback)
 
       Timeout.timeout(::Settings.ems.ems_hawkular.jdr.generation_timeout.to_i_with_method) { @finish_signal.deq }
     rescue Timeout::Error
