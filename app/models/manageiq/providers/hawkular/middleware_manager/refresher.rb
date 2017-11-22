@@ -1,6 +1,5 @@
 module ManageIQ::Providers::Hawkular
-  class MiddlewareManager::Refresher < ManageIQ::Providers::BaseManager::Refresher
-    include ::EmsRefresh::Refreshers::EmsRefresherMixin
+  class MiddlewareManager::Refresher < ManageIQ::Providers::BaseManager::ManagerRefresher
 
     def preprocess_targets
       @targets_by_ems_id.each do |ems_id, targets|
