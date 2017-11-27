@@ -104,11 +104,7 @@ module ManageIQ
               unless hash[:file]['server_groups'].nil?
                 # in case of deploying into server group the resource path should point to the domain controller
                 deployment_data[:server_groups] = hash[:file]['server_groups']
-                deployment_data[:resource_id] = deployment_data[:resource_id]
-                server_group_path_hash = ::Hawkular::Inventory::CanonicalPath.parse(deployment_data[:resource_path]).to_h
-                server_group_path_hash[:resource_ids].slice!(1..-1)
-                host_controller_path = ::Hawkular::Inventory::CanonicalPath.new(server_group_path_hash)
-                deployment_data[:resource_path] = host_controller_path.to_s
+                deployment_data[:resource_id] = connection.inventory.resource(deployment_data[:resource_id]).parent_id
               end
 
               notification_args = NotificationArgs.success(
@@ -266,9 +262,16 @@ module ManageIQ
                 extra_data[:original_operation] || parameters[:operationName],
                 nil,
                 extra_data[:original_resource_id] || parameters[:resourceId],
-                extra_data[:original_feed_id] || parameters[:feedId],
                 MiddlewareServer
               )
+              if extra_data.key?(:server_in_domain)
+                # Operations on domain servers are run on the server-config resource
+                server_resource = connection.inventory.resource(parameters[:resourceId])
+                server_config = connection.inventory.children_resources(server_resource.parent_id).detect do |r|
+                  r.type.id == 'Domain WildFly Server Controller' && r.name == server_resource.name
+                end
+                parameters[:resourceId] = server_config.id
+              end
 
               operation_connection = connection.operations(true)
               if operation_name.nil?
