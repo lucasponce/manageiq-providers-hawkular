@@ -190,11 +190,11 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     end
 
     def machine_id_by_feed(feed)
-      @data_index.fetch_path(:middleware_os_config, :by_feed, feed).try(:fetch, 'Machine Id')
+      @data_index.fetch_path(:middleware_os_config, :by_feed, feed).try(:fetch, 'Machine Id', nil)
     end
 
     def container_id_by_feed(feed)
-      @data_index.fetch_path(:middleware_os_config, :by_feed, feed).try(:fetch, 'Container Id')
+      @data_index.fetch_path(:middleware_os_config, :by_feed, feed).try(:fetch, 'Container Id', nil)
     end
 
     def agent_config_by_feed(feed)
