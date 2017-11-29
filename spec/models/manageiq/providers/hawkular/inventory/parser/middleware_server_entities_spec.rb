@@ -113,7 +113,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServerEntit
     before do
       allow(collector).to receive(:deployments).and_return(eap_with_tree.children)
       allow(collector).to receive(:raw_availability_data)
-        .with(%w[deploy1], hash_including(:order => 'DESC'))
+        .with(%w(deploy1), hash_including(:order => 'DESC'))
         .and_return([metric_data])
     end
 
@@ -157,7 +157,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServerEntit
 
     it 'assigns unknown status to a deployment with a missing metric' do
       allow(collector).to receive(:raw_availability_data)
-        .with(%w[deploy1], hash_including(:order => 'DESC'))
+        .with(%w(deploy1), hash_including(:order => 'DESC'))
         .and_return([])
 
       parser.parse

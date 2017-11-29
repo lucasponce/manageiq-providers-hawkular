@@ -67,7 +67,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServers do
         allow(collector).to receive(:agents).and_return([agent_resource])
         allow(collector).to receive(:eaps).and_return([eap_resource])
         allow(collector).to receive(:raw_availability_data)
-          .with(%w[server1_avail_metric], hash_including(:order => 'DESC'))
+          .with(%w(server1_avail_metric), hash_including(:order => 'DESC'))
           .and_return([metric_data])
       end
   end
@@ -121,7 +121,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServers do
 
   it 'assigns unknown status to a server with a missing metric' do
     allow(collector).to receive(:raw_availability_data)
-      .with(%w[server1_avail_metric], hash_including(:order => 'DESC'))
+      .with(%w(server1_avail_metric), hash_including(:order => 'DESC'))
       .and_return([])
 
     parser.parse

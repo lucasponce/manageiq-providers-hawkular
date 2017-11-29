@@ -21,8 +21,6 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
           fetch_server_groups(parsed_domain, host_controller)
         end
       end
-
-      persister.middleware_server_groups.rehash_secondary_indexes
     end
 
     def fetch_server_groups(parsed_domain, host_controller)

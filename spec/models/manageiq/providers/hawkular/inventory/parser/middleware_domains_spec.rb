@@ -57,7 +57,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareDomains do
         allow(collector).to receive(:resource_tree).with('hc1').and_return(controller_with_tree)
         allow(collector).to receive(:domains).and_return([controller_with_tree.children.first])
         allow(collector).to receive(:raw_availability_data)
-          .with(%w[host_master_avail], hash_including(:order => 'DESC'))
+          .with(%w(host_master_avail), hash_including(:order => 'DESC'))
           .and_return([metric_data])
       end
   end
@@ -125,7 +125,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareDomains do
 
   it 'assigns unknown status to a domain with a missing metric' do
     allow(collector).to receive(:raw_availability_data)
-      .with(%w[host_master_avail], hash_including(:order => 'DESC'))
+      .with(%w(host_master_avail), hash_including(:order => 'DESC'))
       .and_return([])
 
     parser.parse
