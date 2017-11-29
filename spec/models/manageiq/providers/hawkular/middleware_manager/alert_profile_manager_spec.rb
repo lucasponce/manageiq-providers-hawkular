@@ -8,29 +8,26 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::AlertProfileManager d
     ems
   end
   let(:subject) { described_class.new(stubbed_ems) }
-
   let(:server) do
     FactoryGirl.create(:hawkular_middleware_server, :name => 'Serv', :ems_ref => 'c00fee',
-                       :feed => 'my feed', :nativeid => 'nativeid')
+                       :feed => 'test.feed', :nativeid => 'nativeid')
   end
   let(:server2) do
     FactoryGirl.create(:hawkular_middleware_server, :name => 'Serv2', :ems_ref => 'c22fee',
                        :feed => 'feed', :nativeid => 'nativeid2')
   end
-
   let(:alert_id) { 2 }
   let(:group_trigger) do
     double('group_trigger', :id => 'MiQ-2', :name => 'Gtrig',
            :conditions => [
-             double('condition', :data_id => 'foo', :data2_id => 'bar')
+             double('condition', :data_id => 'group_data_id', :expression => '$TS(Test Metric) > 10')
            ])
   end
   let(:server2_member_trigger) { double(:id => "MiQ-2-#{server2.id}") }
-
-  let(:expected_map_for_group_trigger) do
+  let(:expected_context_for_member_trigger) do
     {
-      'foo' => 'hm_some_prefix_MI~R~[my feed/nativeid]~MT~foo',
-      'bar' => 'hm_some_prefix_MI~R~[my feed/nativeid]~MT~bar',
+      '$TS(Test Metric)' => 'test_metric{feed_id="test.feed"}',
+      'resource_path' => 'c00fee'
     }
   end
   let!(:hawkular_alert) do
@@ -58,22 +55,23 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::AlertProfileManager d
   end
 
   it '#create_new_member' do
-    allow(group_trigger).to receive(:context).and_return('dataId.hm.prefix' => 'hm_some_prefix_')
+    allow(server).to receive(:ems_ref).and_return('c00fee')
+    allow(server).to receive(:metrics_available).and_return([{'displayName' => 'Test Metric', 'expression' => 'test_metric{feed_id="test.feed"}'}])
     expect(client).to receive(:create_member_trigger).with(
       an_object_having_attributes(
         :group_id       => 'MiQ-2',
         :member_id      => "MiQ-2-#{server.id}",
         :member_name    => 'Gtrig for Serv',
-        :member_context => {'resource_path' => 'c00fee'},
-        :data_id_map    => expected_map_for_group_trigger,
+        :member_context => expected_context_for_member_trigger
       )
     )
 
-    subject.create_new_member(group_trigger, server.id)
+    subject.create_new_member_from_resource(group_trigger, server)
   end
 
-  it 'calculate_member_data_id_map' do
-    allow(group_trigger).to receive(:context).and_return('dataId.hm.prefix' => 'hm_some_prefix_')
-    expect(subject.calculate_member_data_id_map(server, group_trigger)).to eq(expected_map_for_group_trigger)
+  it 'calculate_member_context' do
+    allow(server).to receive(:ems_ref).and_return('c00fee')
+    allow(server).to receive(:metrics_available).and_return([{'displayName' => 'Test Metric', 'expression' => 'test_metric{feed_id="test.feed"}'}])
+    expect(subject.calculate_member_context(server, group_trigger.conditions[0].expression)).to eq(expected_context_for_member_trigger)
   end
 end
