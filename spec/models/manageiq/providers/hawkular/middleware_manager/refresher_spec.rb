@@ -105,7 +105,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::Refresher do
     end
 
     @ems_hawkular2.reload
-    expect(@ems_hawkular2.middleware_domains).to be_empty
+    expect(@ems_hawkular2.middleware_domains).not_to be_empty
     expect(@ems_hawkular2.middleware_servers).not_to be_empty
     server = @ems_hawkular2.middleware_servers.first
     expect(server.lives_on_id).to be_nil
