@@ -26,8 +26,7 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
       server_group_name = server.config['Server Group']
       unless server_group_name.nil?
         inventory_object.middleware_server_group =
-          persister.middleware_server_groups
-                   .lazy_find_by({:feed => server.feed, :name => server_group_name}, {:ref => :by_feed_and_name})
+          persister.find_server_group_by_feed_and_name(server.feed, server_group_name)
       end
     end
 

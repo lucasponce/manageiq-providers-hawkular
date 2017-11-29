@@ -37,7 +37,7 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     end
 
     def process_server_entity(server, entity)
-      if %w[Deployment SubDeployment].include?(entity.type.id)
+      if %w(Deployment SubDeployment).include?(entity.type.id)
         inventory_object = persister.middleware_deployments.find_or_build(entity.id)
         parse_deployment(entity, inventory_object)
       elsif entity.type.id == 'Datasource'
