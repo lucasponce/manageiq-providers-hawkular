@@ -19,14 +19,15 @@ module ManageIQ
             end
 
             def generic_operation(name, action_name, default_params = {}, default_extra_data = {})
-              define_method(name) do |ems_ref, params = {}, extra_data = {}|
-                run_generic_operation(action_name.to_sym, ems_ref, default_params.merge(params), default_extra_data.merge(extra_data))
+              define_method(name) do |ems_ref, feed_id, params = {}, extra_data = {}|
+                run_generic_operation(action_name.to_sym, ems_ref, feed_id, default_params.merge(params), default_extra_data.merge(extra_data))
               end
             end
 
             def specific_operation(name, action_name, default_params = {})
-              define_method(name) do |ref, params = {}|
-                params[:resourcePath] = ref.to_s
+              define_method(name) do |ref, feed_id, params = {}|
+                params[:resourceId] = ref.to_s
+                params[:feedId] = feed_id
                 run_operation(default_params.merge(params), action_name)
               end
             end
@@ -60,10 +61,11 @@ module ManageIQ
             end
           end
 
-          def add_middleware_datasource(ems_ref, hash)
+          def add_middleware_datasource(ems_ref, feed_id, hash)
             with_provider_connection do |connection|
               datasource_data = {
-                :resourcePath         => ems_ref.to_s,
+                :resourceId           => ems_ref.to_s,
+                :feedId               => feed_id,
                 :datasourceName       => hash[:datasource]["datasourceName"],
                 :xaDatasource         => hash[:datasource]["xaDatasource"],
                 :jndiName             => hash[:datasource]["jndiName"],
@@ -88,23 +90,21 @@ module ManageIQ
             end
           end
 
-          def add_middleware_deployment(ems_ref, hash)
+          def add_middleware_deployment(ems_ref, feed_id, hash)
             with_provider_connection do |connection|
               deployment_data = {
                 :enabled               => hash[:file]["enabled"],
                 :force_deploy          => hash[:file]["force_deploy"],
                 :destination_file_name => hash[:file]["runtime_name"] || hash[:file]["file"].original_filename,
                 :binary_content        => hash[:file]["file"].read,
-                :resource_path         => ems_ref.to_s
+                :resource_id           => ems_ref.to_s,
+                :feed_id               => feed_id
               }
 
               unless hash[:file]['server_groups'].nil?
                 # in case of deploying into server group the resource path should point to the domain controller
                 deployment_data[:server_groups] = hash[:file]['server_groups']
-                server_group_path_hash = ::Hawkular::Inventory::CanonicalPath.parse(deployment_data[:resource_path]).to_h
-                server_group_path_hash[:resource_ids].slice!(1..-1)
-                host_controller_path = ::Hawkular::Inventory::CanonicalPath.new(server_group_path_hash)
-                deployment_data[:resource_path] = host_controller_path.to_s
+                deployment_data[:resource_id] = connection.inventory.resource(deployment_data[:resource_id]).parent_id
               end
 
               notification_args = NotificationArgs.success(
@@ -118,10 +118,11 @@ module ManageIQ
             end
           end
 
-          def undeploy_middleware_deployment(ems_ref, deployment_name)
+          def undeploy_middleware_deployment(ems_ref, feed_id, deployment_name)
             with_provider_connection do |connection|
               deployment_data = {
-                :resource_path   => ems_ref.to_s,
+                :resource_id     => ems_ref.to_s,
+                :feed_id         => feed_id,
                 :deployment_name => deployment_name,
                 :remove_content  => true
               }
@@ -137,10 +138,11 @@ module ManageIQ
             end
           end
 
-          def disable_middleware_deployment(ems_ref, deployment_name)
+          def disable_middleware_deployment(ems_ref, feed_id, deployment_name)
             with_provider_connection do |connection|
               deployment_data = {
-                :resource_path   => ems_ref.to_s,
+                :resource_id     => ems_ref.to_s,
+                :feed_id         => feed_id,
                 :deployment_name => deployment_name
               }
 
@@ -155,10 +157,11 @@ module ManageIQ
             end
           end
 
-          def enable_middleware_deployment(ems_ref, deployment_name)
+          def enable_middleware_deployment(ems_ref, feed_id, deployment_name)
             with_provider_connection do |connection|
               deployment_data = {
-                :resource_path   => ems_ref.to_s,
+                :resource_id     => ems_ref.to_s,
+                :feed_id         => feed_id,
                 :deployment_name => deployment_name
               }
 
@@ -172,10 +175,11 @@ module ManageIQ
             end
           end
 
-          def restart_middleware_deployment(ems_ref, deployment_name)
+          def restart_middleware_deployment(ems_ref, feed_id, deployment_name)
             with_provider_connection do |connection|
               deployment_data = {
-                :resource_path   => ems_ref.to_s,
+                :resource_id     => ems_ref.to_s,
+                :feed_id         => feed_id,
                 :deployment_name => deployment_name
               }
 
@@ -190,7 +194,7 @@ module ManageIQ
             end
           end
 
-          def add_middleware_jdbc_driver(ems_ref, hash)
+          def add_middleware_jdbc_driver(ems_ref, feed_id, hash)
             with_provider_connection do |connection|
               driver_data = {
                 :driver_name          => hash[:driver]["driver_name"],
@@ -200,7 +204,8 @@ module ManageIQ
                 :driver_major_version => hash[:driver]["driver_major_version"],
                 :driver_minor_version => hash[:driver]["driver_minor_version"],
                 :binary_content       => hash[:driver]["file"].read,
-                :resource_path        => ems_ref.to_s
+                :resource_id          => ems_ref.to_s,
+                :feed_id              => feed_id
               }
 
               notification_args = NotificationArgs.success(
@@ -219,14 +224,15 @@ module ManageIQ
           # Trigger running a (Hawkular) operation on the
           # selected target server. This server is identified
           # by ems_ref, which in Hawkular terms is the
-          # fully qualified resource path from Hawkular inventory
+          # resource id from Hawkular inventory
           #
           # this method execute an operation through ExecuteOperation request command.
           #
-          def run_generic_operation(operation_name, ems_ref, parameters = {}, extra_data = {})
+          def run_generic_operation(operation_name, ems_ref, feed_id, parameters = {}, extra_data = {})
             the_operation = {
               :operationName => operation_name,
-              :resourcePath  => ems_ref.to_s,
+              :resourceId    => ems_ref.to_s,
+              :feedId        => feed_id,
               :parameters    => parameters
             }
             run_operation(the_operation, nil, extra_data)
@@ -255,9 +261,17 @@ module ManageIQ
               notification_args = NotificationArgs.success(
                 extra_data[:original_operation] || parameters[:operationName],
                 nil,
-                extra_data[:original_resource_path] || parameters[:resourcePath],
+                extra_data[:original_resource_id] || parameters[:resourceId],
                 MiddlewareServer
               )
+              if extra_data.key?(:server_in_domain)
+                # Operations on domain servers are run on the server-config resource
+                server_resource = connection.inventory.resource(parameters[:resourceId])
+                server_config = connection.inventory.children_resources(server_resource.parent_id).detect do |r|
+                  r.type.id == 'Domain WildFly Server Controller' && r.name == server_resource.name
+                end
+                parameters[:resourceId] = server_config.id
+              end
 
               operation_connection = connection.operations(true)
               if operation_name.nil?
