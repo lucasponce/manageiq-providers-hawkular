@@ -1,6 +1,6 @@
 module ManageIQ::Providers
   class Hawkular::MiddlewareManager::MiddlewareServer < MiddlewareServer
-    AVAIL_TYPE_ID = 'Server%20Availability~Server%20Availability'.freeze
+    AVAIL_TYPE_ID = 'Server Availability'.freeze
 
     has_many :middleware_diagnostic_reports, :dependent => :destroy
 

@@ -54,6 +54,7 @@
       :generation_timeout: 3.minutes
 :ems_refresh:
   :hawkular:
+    :inventory_object_refresh: true
     :refresh_interval: 15.minutes
 :http_proxy:
   :hawkular:

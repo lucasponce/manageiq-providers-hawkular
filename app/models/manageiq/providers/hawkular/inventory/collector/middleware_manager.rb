@@ -8,48 +8,44 @@ module ManageIQ::Providers
       @connection ||= manager.connect
     end
 
-    def feeds
-      connection.inventory.list_feeds
+    def resource_tree(resource_id)
+      connection.inventory.resource_tree(resource_id)
     end
 
-    def eaps(feed)
-      resources_for(feed, 'WildFly Server')
+    def oss
+      resources_for('Platform_Operating System')
     end
 
-    def domains(feed)
-      resources_for(feed, 'Domain Host')
-        .select { |host| host.properties['Is Domain Controller'] == 'true' }
+    def agents
+      resources_for('Hawkular WildFly Agent')
     end
 
-    def server_groups(feed)
-      resources_for(feed, 'Domain Server Group')
+    def eaps
+      resources_for('WildFly Server')
     end
 
-    def domain_servers(feed)
-      resources_for(feed, 'Domain WildFly Server')
+    def domain_servers
+      resources_for('Domain WildFly Server')
     end
 
-    def child_resources(resource_path, recursive = false)
-      manager.child_resources(resource_path, recursive)
+    def deployments
+      resources_for('Deployment')
     end
 
-    def machine_id(feed)
-      os_property_for(feed, 'Machine Id')
+    def subdeployments
+      resources_for('SubDeployment')
     end
 
-    def container_id(feed)
-      os_property_for(feed, 'Container Id')
+    def host_controllers
+      resources_for('Host Controller')
     end
 
-    def config_data_for_resource(resource_path)
-      connection.inventory.get_config_data_for_resource(resource_path)
+    def domains
+      resources_for('Domain Host').select(&:domain_controller?)
     end
 
-    def metrics_for_metric_type(feed, metric_type_id)
-      metric_type_path = ::Hawkular::Inventory::CanonicalPath.new(
-        :metric_type_id => metric_type_id, :feed_id => feed
-      )
-      connection.inventory.list_metrics_for_metric_type(metric_type_path)
+    def child_resources(resource_id, recursive = false)
+      manager.child_resources(resource_id, recursive)
     end
 
     def raw_availability_data(*args)
@@ -58,32 +54,9 @@ module ManageIQ::Providers
 
     private
 
-    def os_property_for(feed, property)
-      os_resource_for(feed)
-        .try(:properties)
-        .try { |prop| prop[property] }
+    def resources_for(resource_type)
+      connection.inventory.resources_for_type(resource_type)
     end
 
-    def os_resource_for(feed)
-      os_for(feed)
-        .try { |os| connection.inventory.list_resources_for_type(os.path, true) }
-        .presence
-        .try(:first)
-    end
-
-    def os_for(feed)
-      connection
-        .inventory
-        .list_resource_types(feed)
-        .find { |item| item.id.include? 'Operating System' }
-    end
-
-    def resources_for(feed, resource_type_path)
-      path = ::Hawkular::Inventory::CanonicalPath.new(
-        :feed_id          => hawk_escape_id(feed),
-        :resource_type_id => hawk_escape_id(resource_type_path)
-      )
-      connection.inventory.list_resources_for_type(path.to_s, :fetch_properties => true)
-    end
   end
 end

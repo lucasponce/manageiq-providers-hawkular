@@ -1,5 +1,5 @@
 require_relative 'hawkular_helper'
-# VCR Cassettes: Hawkular Services 0.0.13.Final-SNAPSHOT (commit 3cef2062513f4d949aa21a90db51f9cd105cf329)
+# VCR Cassettes: Hawkular Services 0.40.0.Final-SNAPSHOT (commit 61ad2c1db6dc94062841ca2f5be9699e69d96cfe)
 
 describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareMessaging do
   vcr_cassete_name = described_class.name.underscore.to_s
@@ -22,8 +22,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareMessaging d
                        :id                    => 1,
                        :name                  => 'Local',
                        :feed                  => test_mw_manager_feed_id,
-                       :ems_ref               => "/t;hawkular/f;#{test_mw_manager_feed_id}/r;Local~~",
-                       :nativeid              => 'Local~~',
+                       :ems_ref               => "#{test_mw_manager_feed_id}~Local~~",
+                       :nativeid              => "#{test_mw_manager_feed_id}~Local~~",
                        :ext_management_system => ems_hawkular)
   end
 
@@ -32,21 +32,13 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareMessaging d
       let(:ms) do
         if ms_model == :queue
           FactoryGirl.create(:hawkular_middleware_messaging_initialized_queue,
-                             :ems_ref               => '/t;hawkular'\
-                                                 "/f;#{test_mw_manager_feed_id}/r;Local~~"\
-                                                 '/r;Local~%2Fsubsystem%3Dmessaging-activemq%2Fserver%3Ddefault/' \
-                                                 'r;Local~%2Fsubsystem%3Dmessaging-activemq%2Fserver%3Ddefault%2Fjms'\
-                                                 '-queue%3DDLQ',
+                             :ems_ref               => "#{test_mw_manager_feed_id}~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ",
                              :ext_management_system => ems_hawkular,
                              :middleware_server     => eap,
                              :messaging_type        => 'JMS Queue')
         else
           FactoryGirl.create(:hawkular_middleware_messaging_initialized_topic,
-                             :ems_ref               => '/t;hawkular'\
-                                                 "/f;#{test_mw_manager_feed_id}/r;Local~~"\
-                                                 '/r;Local~%2Fsubsystem%3Dmessaging-activemq%2Fserver%3Ddefault'\
-                                                 '/r;Local~%2Fsubsystem%3Dmessaging-activemq%2Fserver%3Ddefault%2F'\
-                                                 'jms-topic%3DHawkularAlertData',
+                             :ems_ref               => "#{test_mw_manager_feed_id}~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData",
                              :ext_management_system => ems_hawkular,
                              :middleware_server     => eap,
                              :messaging_type        => 'JMS Topic')

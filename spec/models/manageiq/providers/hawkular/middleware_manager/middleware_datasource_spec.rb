@@ -1,6 +1,6 @@
 require_relative 'hawkular_helper'
 
-# VCR Cassettes: Hawkular Services 0.0.13.Final-SNAPSHOT (commit 3cef2062513f4d949aa21a90db51f9cd105cf329)
+# VCR Cassettes: Hawkular Services 0.40.0.Final-SNAPSHOT (commit 61ad2c1db6dc94062841ca2f5be9699e69d96cfe)
 
 describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDatasource do
   let(:ems_hawkular) do
@@ -21,18 +21,15 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDatasource 
                        :id                    => 1,
                        :name                  => 'Local',
                        :feed                  => the_feed_id,
-                       :ems_ref               => '/t;hawkular'\
-                                                 "/f;#{the_feed_id}/r;Local~~",
-                       :nativeid              => 'Local~~',
+                       :ems_ref               => "#{the_feed_id}~Local~~",
+                       :nativeid              => "#{the_feed_id}~Local~~",
                        :ext_management_system => ems_hawkular)
   end
 
   let(:ds) do
     FactoryGirl.create(:hawkular_middleware_datasource,
                        :name                  => 'ExampleDS',
-                       :ems_ref               => '/t;hawkular'\
-                                                 "/f;#{the_feed_id}/r;Local%20DMR~~"\
-                                                 '/r;Local%20DMR~%2Fsubsystem%3Ddatasources%2Fdata-source%3DExampleDS',
+                       :ems_ref               => "#{the_feed_id}~Local DMR~/subsystem=datasources/data-source=ExampleDS",
                        :ext_management_system => ems_hawkular,
                        :middleware_server     => eap,
                        :properties            => {

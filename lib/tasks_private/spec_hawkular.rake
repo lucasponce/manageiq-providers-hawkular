@@ -55,21 +55,25 @@ module ManageIQ::Providers::Hawkular::TaskHelpers
       puts "Waiting for MW Manager to be ready... "
 
       test_endpoints = {
-        'H-services' => {
+        'H-services'  => {
           :uri  => 'http://localhost:8080/hawkular/status',
           :test => ->(h) { h['Implementation-Version'] }
         },
-        'H-alerts'   => {
+        'H-alerts'    => {
           :uri  => 'http://localhost:8080/hawkular/alerts/status',
           :test => ->(h) { h['status'] == 'STARTED' }
         },
-        'H-metrics'  => {
+        'H-metrics'   => {
           :uri  => 'http://localhost:8080/hawkular/metrics/status',
           :test => ->(h) { h['MetricsService'] == 'STARTED' }
+        },
+        'H-inventory' => {
+          :uri  => 'http://localhost:8080/hawkular/inventory/status',
+          :test => ->(h) { h['status'] == 'UP' }
         }
       }
 
-      wait_until_ready(['H-services', 'H-alerts', 'H-metrics']) do |endpoint|
+      wait_until_ready(['H-services', 'H-alerts', 'H-metrics', 'H-inventory']) do |endpoint|
         endpoint = test_endpoints[endpoint]
         begin
           response = JSON.parse(Net::HTTP.get(URI(endpoint[:uri])))
@@ -88,23 +92,23 @@ module ManageIQ::Providers::Hawkular::TaskHelpers
       puts "done."
 
       puts "Waiting for feeds to be in inventory..."
-      feeds_to_test = ['mw-manager', 'wf-standalone', 'master.Unnamed Domain']
+      feeds_to_test = ['mw-manager', 'wf-standalone', 'wf-domain']
 
       client = hawkular_client.inventory
-      wait_until_ready(feeds_to_test) { |feed| client.list_feeds.find { |f| f == feed } }
+      wait_until_ready(feeds_to_test) { |feed| client.root_resources.map(&:feed).include?(feed) }
     end
 
     def self.wait_for_metrics_data
       puts 'Waiting for some metrics to be pushed...'
 
       metrics_to_test = [
-        'MI~R~[wf-standalone/Local DMR~~]~MT~WildFly Memory Metrics~NonHeap Used',
-        'MI~R~[mw-manager/Local~~]~MT~WildFly Memory Metrics~Heap Committed',
-        'MI~R~[mw-manager/Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS Queue Metrics~Scheduled Count',
-        'MI~R~[mw-manager/Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS Topic Metrics~Message Count',
-        'MI~R~[master.Unnamed Domain/Local~/host=master/server=server-one]~MT~WildFly Memory Metrics~Heap Used',
-        'MI~R~[wf-standalone/Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~In Use Count',
-        'MI~R~[wf-standalone/Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Max Wait Time'
+        'MI~R~[wf-standalone/wf-standalone~Local DMR~~]~MT~WildFly Memory Metrics~NonHeap Used',
+        'MI~R~[mw-manager/mw-manager~Local~~]~MT~WildFly Memory Metrics~Heap Committed',
+        'MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ]~MT~JMS Queue Metrics~Scheduled Count',
+        'MI~R~[mw-manager/mw-manager~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData]~MT~JMS Topic Metrics~Message Count',
+        'MI~R~[wf-domain/wf-domain~Local DMR~/host=master/server=server-one]~MT~WildFly Memory Metrics~Heap Used',
+        'MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~In Use Count',
+        'MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Max Wait Time'
       ]
 
       client = hawkular_client.metrics.gauges

@@ -3,6 +3,7 @@
 module ManageIQ::Providers
   class Hawkular::MiddlewareManager < ManageIQ::Providers::MiddlewareManager
     require 'hawkular/hawkular_client'
+    require 'hawkular_monkey_patches.rb'
 
     require_nested :AlertManager
     require_nested :AlertProfileManager
@@ -56,7 +57,7 @@ module ManageIQ::Providers
       begin
         # As the connect will only give a handle
         # we verify the credentials via an actual operation
-        connect(options).inventory.list_feeds
+        connect(options).inventory.root_resources
       rescue URI::InvalidComponentError
         raise MiqException::MiqHostError, "Host '#{hostname}' is invalid"
       rescue ::Hawkular::ConnectionException
@@ -127,15 +128,27 @@ module ManageIQ::Providers
       end
     end
 
-    def child_resources(resource_path, recursive = false)
+    def child_resources(resource_id, recursive = false)
       with_provider_connection do |connection|
-        connection.inventory.list_child_resources(resource_path, recursive)
+        connection.inventory.list_child_resources(resource_id, recursive)
       end
     end
 
-    def metrics_resource(resource_path)
+    def resource(resource_id)
       with_provider_connection do |connection|
-        connection.inventory.list_metrics_for_resource(resource_path)
+        connection.inventory.resource(resource_id)
+      end
+    end
+
+    def resource_tree(resource_id)
+      with_provider_connection do |connection|
+        connection.inventory.resource_tree(resource_id)
+      end
+    end
+
+    def metrics_resource(resource_id)
+      with_provider_connection do |connection|
+        connection.inventory.resource(resource_id).try(:metrics)
       end
     end
 
