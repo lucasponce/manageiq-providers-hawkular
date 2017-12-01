@@ -141,7 +141,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
           ems.public_send("#{operation}_middleware_domain_server",
                           mw_domain_server.ems_ref.sub(/%2Fserver%3D/, '%2Fserver-config%3D'),
                           {},
-                          :original_resource_path => mw_domain_server.ems_ref)
+                          :original_resource_id => mw_domain_server.ems_ref)
           queue = MiqQueue.last
           expect(queue).not_to be_nil
           queue.deliver
@@ -159,7 +159,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
           ems.public_send("#{operation}_middleware_domain_server",
                           mw_domain_server.ems_ref.sub(/%2Fserver%3D/, '%2Fserver-config%3D'),
                           {},
-                          :original_resource_path => mw_domain_server.ems_ref)
+                          :original_resource_id => mw_domain_server.ems_ref)
 
           queue = MiqQueue.last
           expect(queue).not_to be_nil

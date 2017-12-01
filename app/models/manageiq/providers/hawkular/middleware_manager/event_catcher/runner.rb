@@ -104,7 +104,7 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Runner <
     event.event_type = event.tags[TAG_EVENT_TYPE]
     if event.context
       event.message        = event.context['message'] # optional, prefer context message if provided
-      event.middleware_ref = event.context['resource_path'] # optional context for linking to resource
+      event.middleware_ref = event.context['resource_id'] # optional context for linking to resource
     end
     event.message ||= event.text
     # at time of writing the timeline can not handle newlines or double quotes in the message. Because the

@@ -351,7 +351,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"groupId":"MiQ-region-abc-ems-def-alert-201","memberId":"MiQ-region-abc-ems-def-alert-201-400","memberName":"Jvm
-        Heap Used Alert for server-one","memberDescription":null,"memberContext":{"resource_path":"wf-domain~Local
+        Heap Used Alert for server-one","memberDescription":null,"memberContext":{"resource_id":"wf-domain~Local
         DMR~/host=master/server=server-one"},"memberTags":null,"dataIdMap":{"WildFly
         Memory Metrics~Heap Used":"hm_g_MI~R~[wf-domain/wf-domain~Local DMR~/host=master/server=server-one]~MT~WildFly
         Memory Metrics~Heap Used","WildFly Memory Metrics~Heap Max":"hm_g_MI~R~[wf-domain/wf-domain~Local
@@ -397,7 +397,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"tenantId":"hawkular","id":"MiQ-region-abc-ems-def-alert-201-400","name":"Jvm
-        Heap Used Alert for server-one","description":"Jvm Heap Used Alert","type":"MEMBER","eventType":"EVENT","eventCategory":null,"eventText":null,"severity":"MEDIUM","context":{"miq.alert_profiles":"202","dataId.hm.prefix":"hm_g_","dataId.hm.type":"gauge","resource_path":"wf-domain~Local
+        Heap Used Alert for server-one","description":"Jvm Heap Used Alert","type":"MEMBER","eventType":"EVENT","eventCategory":null,"eventText":null,"severity":"MEDIUM","context":{"miq.alert_profiles":"202","dataId.hm.prefix":"hm_g_","dataId.hm.type":"gauge","resource_id":"wf-domain~Local
         DMR~/host=master/server=server-one"},"tags":{"miq.event_type":"hawkular_alert","miq.resource_type":"MiddlewareServer"},"autoDisable":false,"autoEnable":false,"autoResolve":false,"autoResolveAlerts":true,"autoResolveMatch":"ALL","dataIdMap":{"WildFly
         Memory Metrics~Heap Used":"hm_g_MI~R~[wf-domain/wf-domain~Local DMR~/host=master/server=server-one]~MT~WildFly
         Memory Metrics~Heap Used","WildFly Memory Metrics~Heap Max":"hm_g_MI~R~[wf-domain/wf-domain~Local
@@ -454,7 +454,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '[{"tenantId":"hawkular","id":"MiQ-region-abc-ems-def-alert-201-400","name":"Jvm
-        Heap Used Alert for server-one","description":"Jvm Heap Used Alert","type":"MEMBER","eventType":"EVENT","eventCategory":null,"eventText":null,"severity":"MEDIUM","context":{"dataId.hm.prefix":"hm_g_","dataId.hm.type":"gauge","miq.alert_profiles":"202","resource_path":"wf-domain~Local
+        Heap Used Alert for server-one","description":"Jvm Heap Used Alert","type":"MEMBER","eventType":"EVENT","eventCategory":null,"eventText":null,"severity":"MEDIUM","context":{"dataId.hm.prefix":"hm_g_","dataId.hm.type":"gauge","miq.alert_profiles":"202","resource_id":"wf-domain~Local
         DMR~/host=master/server=server-one"},"tags":{"miq.event_type":"hawkular_alert","miq.resource_type":"MiddlewareServer"},"autoDisable":false,"autoEnable":false,"autoResolve":false,"autoResolveAlerts":true,"autoResolveMatch":"ALL","dataIdMap":{"WildFly
         Memory Metrics~Heap Max":"hm_g_MI~R~[wf-domain/wf-domain~Local DMR~/host=master/server=server-one]~MT~WildFly
         Memory Metrics~Heap Max","WildFly Memory Metrics~Heap Used":"hm_g_MI~R~[wf-domain/wf-domain~Local
@@ -854,7 +854,7 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"tenantId":"hawkular","id":"MiQ-region-abc-ems-def-alert-201-400","name":"Jvm
-        Heap Used Alert for server-one","description":"Jvm Heap Used Alert","type":"ORPHAN","eventType":"EVENT","eventCategory":null,"eventText":null,"severity":"MEDIUM","context":{"dataId.hm.prefix":"hm_g_","dataId.hm.type":"gauge","miq.alert_profiles":"202","resource_path":"wf-domain~Local
+        Heap Used Alert for server-one","description":"Jvm Heap Used Alert","type":"ORPHAN","eventType":"EVENT","eventCategory":null,"eventText":null,"severity":"MEDIUM","context":{"dataId.hm.prefix":"hm_g_","dataId.hm.type":"gauge","miq.alert_profiles":"202","resource_id":"wf-domain~Local
         DMR~/host=master/server=server-one"},"tags":{"miq.event_type":"hawkular_alert","miq.resource_type":"MiddlewareServer"},"autoDisable":false,"autoEnable":false,"autoResolve":false,"autoResolveAlerts":true,"autoResolveMatch":"ALL","dataIdMap":{"WildFly
         Memory Metrics~Heap Max":"hm_g_MI~R~[wf-domain/wf-domain~Local DMR~/host=master/server=server-one]~MT~WildFly
         Memory Metrics~Heap Max","WildFly Memory Metrics~Heap Used":"hm_g_MI~R~[wf-domain/wf-domain~Local
