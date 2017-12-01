@@ -65,7 +65,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Runner 
       event = ::Hawkular::Alerts::Event.new({})
       event.ctime = Time.now.to_i
       event.text    = 'text message'
-      event.context = {'resource_path' => 'canonical_path', 'message' => 'context message'}
+      event.context = {'resource_id' => 'resource_id', 'message' => 'context message'}
       event.tags    = {'miq.event_type' => 'hawkular_event.critical', 'miq.resource_type' => 'MiddlewareServer'}
 
       hash = subject.send(:event_to_hash, event, 1)
@@ -75,7 +75,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Runner 
       expect(hash[:timestamp]).to be_an Time
       expect(hash[:event_type]).to eq 'hawkular_event.critical'
       expect(hash[:message]).to eq 'context message'
-      expect(hash[:middleware_ref]).to eq 'canonical_path'
+      expect(hash[:middleware_ref]).to eq 'resource_id'
       expect(hash[:middleware_type]).to eq 'MiddlewareServer'
       expect(hash[:full_data]).to be_an String
     end

@@ -1,6 +1,7 @@
 module ManageIQ::Providers
   class Hawkular::MiddlewareManager::AlertProfileManager
     require 'hawkular/hawkular_client'
+    require 'digest/sha1'
 
     def initialize(ems)
       @ems = ems
@@ -68,7 +69,7 @@ module ManageIQ::Providers
     def assign_members(group_trigger, profile_id, members_ids)
       group_trigger.context = assign_members_context(group_trigger, profile_id)
       @alerts_client.update_group_trigger(group_trigger)
-      members = @alerts_client.list_members group_trigger.id
+      members = @alerts_client.list_members(group_trigger.id)
       current_members_ids = members.collect(&:id)
       members_ids.each do |member_id|
         next if current_members_ids.include?("#{group_trigger.id}-#{member_id}")
@@ -85,29 +86,33 @@ module ManageIQ::Providers
     end
 
     def create_new_member(group_trigger, member_id)
-      server = MiddlewareServer.find(member_id)
+      resource = MiddlewareServer.find(member_id)
+      create_new_member_from_resource(group_trigger, resource)
+    end
+
+    def create_new_member_from_resource(group_trigger, resource)
       new_member = ::Hawkular::Alerts::Trigger::GroupMemberInfo.new
       new_member.group_id = group_trigger.id
-      new_member.member_id = "#{group_trigger.id}-#{member_id}"
-      new_member.member_name = "#{group_trigger.name} for #{server.name}"
-      new_member.member_context = {'resource_path' => server.ems_ref.to_s}
-      new_member.data_id_map = calculate_member_data_id_map(server, group_trigger)
+      member_trigger_id = "#{group_trigger.id}-#{resource.id}"
+      new_member.member_id = member_trigger_id
+      new_member.member_name = "#{group_trigger.name} for #{resource.name}"
+      # Note, the dataId must be unique to the member trigger but can not be the member trigger id because
+      # that is not allowed by hAlerts (will cause infinite event chaining).  So, use a digest.
+      new_member.data_id_map = { 'group_data_id' => Digest::SHA1.hexdigest(member_trigger_id) }
+      new_member.member_context = calculate_member_context(resource, group_trigger.conditions[0].expression)
       @alerts_client.create_member_trigger(new_member)
     end
 
-    def calculate_member_data_id_map(server, group_trigger)
-      data_id_map = {}
-      prefix = group_trigger.context['dataId.hm.prefix'].nil? ? '' : group_trigger.context['dataId.hm.prefix']
-
-      group_trigger.conditions.each do |condition|
-        id_prefix = "#{prefix}MI~R~[#{server.feed}/#{server.nativeid}]~MT~"
-
-        data_id_map[condition.data_id] = "#{id_prefix}#{condition.data_id}"
-        unless condition.data2_id.nil?
-          data_id_map[condition.data2_id] = "#{id_prefix}#{condition.data2_id}"
-        end
+    def calculate_member_context(resource, expression)
+      context = {}
+      context['resource_id'] = resource.ems_ref.to_s
+      resource.metrics_available.each do |metric|
+        ts = "$TS(#{metric['displayName']})"
+        family_ts = "$FAMILY_TS(#{metric['displayName']})"
+        context[ts] = metric['expression'] if expression.include?(ts)
+        context[family_ts] = metric['expression'].match("#{metric['family']}{.*}") if expression.include?(family_ts)
       end
-      data_id_map
+      context
     end
 
     private

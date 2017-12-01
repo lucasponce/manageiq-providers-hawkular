@@ -9,23 +9,14 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::AlertManager do
   end
   let(:subject) { described_class.new(stubbed_ems) }
 
-  it '#convert_operator' do
-    expect(subject.send(:convert_operator, "<")).to eq(:LT)
-    expect(subject.send(:convert_operator, "<=")).to eq(:LTE)
-    expect(subject.send(:convert_operator, ">=")).to eq(:GTE)
-    expect(subject.send(:convert_operator, "=")).to eq(:LTE)
-    expect(subject.send(:convert_operator, ">")).to eq(:GT)
-    expect(subject.send(:convert_operator, "wrong operator")).to eq(nil)
-  end
-
   it '#generate_mw_threshold_condition' do
-    c = subject.send(:generate_mw_threshold_condition, "1", :LT, 3)
+    c = subject.send(:generate_mw_threshold_condition, "Available Count", "<", 3)
     expect(c).to be_a_kind_of(Hawkular::Alerts::Trigger::Condition)
-    expect(c.data_id).to eq("1")
+    expect(c.data_id).to eq("group_data_id")
     expect(c.trigger_mode).to eq(:FIRING)
-    expect(c.type).to eq(:THRESHOLD)
-    expect(c.operator).to eq(:LT)
-    expect(c.threshold).to eq(3)
+    expect(c.alerter_id).to eq("prometheus")
+    expect(c.type).to eq(:EXTERNAL)
+    expect(c.expression).to eq("$TS(Available Count) < 3")
   end
 
   context "Test conditions" do
@@ -41,18 +32,6 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::AlertManager do
         },
         :based_on    => "MiddlewareServer"
       }
-    end
-
-    it '#convert_to_group_conditions MW GC' do
-      miq_alert_condition[:conditions][:eval_method] = "mw_accumulated_gc_duration"
-      miq_alert_condition[:conditions][:options][:mw_operator] = "<"
-      miq_alert_condition[:conditions][:options][:value_mw_garbage_collector] = 100
-      expect(subject).to receive(:generate_mw_gc_condition).with(
-        'mw_accumulated_gc_duration',
-        :mw_operator                => "<",
-        :value_mw_garbage_collector => 100
-      )
-      subject.send(:convert_to_group_conditions, miq_alert_condition)
     end
 
     it '#convert_to_group_conditions MW GC' do
@@ -145,7 +124,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::AlertManager do
       miq_alert_condition[:conditions][:options][:value_mw_garbage_collector] = 100
       MW_MESSAGING.each do |condition|
         miq_alert_condition[:conditions][:eval_method] = condition
-        definition = MiddlewareMessaging.live_metrics_config['middleware_messaging_jms_topic']['supported_metrics_by_column'][condition]
+        definition = MiddlewareMessaging.live_metrics_config['middleware_messaging']['supported_metrics_by_column'][condition]
         expect(definition).not_to be_nil
         expect(subject).to receive(:generate_mw_generic_threshold_conditions).with(
           {
