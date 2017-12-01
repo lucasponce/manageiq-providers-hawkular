@@ -4,6 +4,21 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     include ManageIQ::Providers::Hawkular::Inventory::Parser::AvailabilityMixin
     include ::Hawkular::ClientUtils
 
+    SUPPORTED_ENTITIES = ['Deployment', 'SubDeployment', 'Datasource', 'JMS Queue', 'JMS Topic'].freeze
+
+    def initialize
+      @supported_types = []
+      @supported_deployments = []
+      @supported_subdeployments = []
+      @supported_datasources = []
+      ManageIQ::Providers::Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+        SUPPORTED_ENTITIES.each { |entity| @supported_types << "#{entity} #{version}" }
+        %w(Deployment SubDeployment).each { |deployment| @supported_deployments << "#{deployment} #{version}" }
+        @supported_subdeployments << "SubDeployment #{version}"
+        @supported_datasources << "Datasource #{version}"
+      end
+    end
+
     def parse
       fetch_server_entities
       fetch_deployment_availabilities
@@ -15,7 +30,7 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
       persister.middleware_servers.each do |eap|
         eap_tree = collector.resource_tree(eap.ems_ref)
         eap_tree.children(true).each do |child|
-          next unless ['Deployment', 'SubDeployment', 'Datasource', 'JMS Queue', 'JMS Topic'].include?(child.type.id)
+          next unless @supported_types.include?(child.type.id)
           process_server_entity(eap, child)
         end
       end
@@ -24,7 +39,7 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     def fetch_deployment_availabilities
       collection = persister.middleware_deployments
       fetch_availabilities_for(collector.deployments, collection, collection.model_class::AVAIL_TYPE_ID) do |deployment, availability|
-        deployment.status = process_deployment_availability(availability.try(:[], 'data').try(:first))
+        deployment.status = process_deployment_availability(availability)
       end
       subdeployments_by_deployment_id = collector.subdeployments.group_by(&:parent_id)
       subdeployments_by_deployment_id.keys.each do |parent_id|
@@ -37,10 +52,10 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     end
 
     def process_server_entity(server, entity)
-      if %w(Deployment SubDeployment).include?(entity.type.id)
+      if @supported_deployments.include?(entity.type.id)
         inventory_object = persister.middleware_deployments.find_or_build(entity.id)
         parse_deployment(entity, inventory_object)
-      elsif entity.type.id == 'Datasource'
+      elsif @supported_datasources.include?(entity.type.id)
         inventory_object = persister.middleware_datasources.find_or_build(entity.id)
         parse_datasource(entity, inventory_object)
       else
@@ -55,7 +70,7 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     def parse_deployment(deployment, inventory_object)
       parse_base_item(deployment, inventory_object)
       inventory_object.name = deployment.name
-      if deployment.type.id == 'SubDeployment'
+      if @supported_subdeployments.include?(deployment.type.id)
         inventory_object.properties[inventory_object.model_class::PARENT_DEPLOYMENT_ID_PROPERTY] = deployment.parent_id
       end
     end
@@ -76,7 +91,11 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     end
 
     def process_deployment_availability(availability = nil)
-      process_availability(availability, 'up' => 'Enabled', 'down' => 'Disabled')
+      if availability.first['value'] && availability.first['value'][1] == '1'
+        'Enabled'
+      else
+        'Disabled'
+      end
     end
   end
 end

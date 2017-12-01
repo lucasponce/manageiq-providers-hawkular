@@ -50,7 +50,7 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
                                collection.model_class::AVAIL_TYPE_ID) do |server, availability|
         props = server.properties
         props['Availability'], props['Calculated Server State'] =
-          process_server_availability(props['Server State'], availability.try(:[], 'data').try(:first))
+          process_server_availability(props['Server State'], availability)
       end
     end
 
@@ -185,8 +185,12 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     end
 
     def process_server_availability(server_state, availability = nil)
-      avail = availability.try(:[], 'value') || 'unknown'
-      [avail, avail == 'up' ? server_state : avail]
+      avail = if availability.first['value'] && availability.first['value'][1] == '1'
+                'Running'
+              else
+                'STOPPED'
+              end
+      [avail, avail == 'Running' ? server_state : avail]
     end
 
     def machine_id_by_feed(feed)
