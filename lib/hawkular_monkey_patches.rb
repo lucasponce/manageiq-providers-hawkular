@@ -11,15 +11,27 @@ module MonkeyPatches
         end
 
         def children_domain_hosts(recursive = false)
-          children_by_type('Domain Host', recursive)
+          children_domain_hosts = []
+          ManageIQ::Providers::Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+            children_by_type("Domain Host #{version}", recursive)
+          end
+          children_domain_hosts
         end
 
         def children_server_groups(recursive = false)
-          children_by_type('Domain Server Group', recursive)
+          children_server_groups = []
+          ManageIQ::Providers::Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+            children_by_type("Domain Server Group #{version}", recursive)
+          end
+          children_server_groups
         end
 
         def children_domain_servers(recursive = false)
-          children_by_type('Domain WildFly Server', recursive)
+          children_domain_servers = []
+          ManageIQ::Providers::Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+            children_by_type("Domain WildFly Server #{version}", recursive)
+          end
+          children_domain_servers
         end
       end
     end

@@ -23,6 +23,8 @@ module ManageIQ::Providers
     DEFAULT_PORT = 80
     default_value_for :port, DEFAULT_PORT
 
+    SUPPORTED_VERSIONS = %w(WF10 EAP6).freeze
+
     has_many :middleware_domains, :foreign_key => :ems_id, :dependent => :destroy
     has_many :middleware_servers, :foreign_key => :ems_id, :dependent => :destroy
     has_many :middleware_deployments, :foreign_key => :ems_id, :dependent => :destroy
@@ -152,8 +154,8 @@ module ManageIQ::Providers
       end
     end
 
-    def metrics_client
-      with_provider_connection(&:metrics)
+    def prometheus_client
+      with_provider_connection(&:prometheus)
     end
 
     def inventory_client

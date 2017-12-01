@@ -13,43 +13,75 @@ module ManageIQ::Providers
     end
 
     def oss
-      resources_for('Platform_Operating System')
+      oss = []
+      Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+        oss.concat(resources_for("Platform_Operating System #{version}"))
+      end
+      oss
     end
 
     def agents
-      resources_for('Hawkular WildFly Agent')
+      agents = []
+      Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+        agents.concat(resources_for("Hawkular Java Agent #{version}"))
+      end
+      agents
     end
 
     def eaps
-      resources_for('WildFly Server')
+      eaps = []
+      Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+        eaps.concat(resources_for("WildFly Server #{version}"))
+      end
+      eaps
     end
 
     def domain_servers
-      resources_for('Domain WildFly Server')
+      domains = []
+      Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+        domains.concat(resources_for("Domain WildFly Server #{version}"))
+      end
+      domains
     end
 
     def deployments
-      resources_for('Deployment')
+      deployments = []
+      Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+        deployments.concat(resources_for("Deployment #{version}"))
+      end
+      deployments
     end
 
     def subdeployments
-      resources_for('SubDeployment')
+      subdeployments = []
+      Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+        subdeployments.concat(resources_for("SubDeployment #{version}"))
+      end
+      subdeployments
     end
 
     def host_controllers
-      resources_for('Host Controller')
+      host_controllers = []
+      Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+        host_controllers.concat(resources_for("Host Controller #{version}"))
+      end
+      host_controllers
     end
 
     def domains
-      resources_for('Domain Host').select(&:domain_controller?)
+      domains = []
+      Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
+        domains.concat(resources_for("Domain Host #{version}"))
+      end
+      domains
     end
 
     def child_resources(resource_id, recursive = false)
       manager.child_resources(resource_id, recursive)
     end
 
-    def raw_availability_data(*args)
-      connection.metrics.avail.raw_data(*args)
+    def raw_availability_data(metrics, time)
+      connection.prometheus.query(:metrics => metrics, :time => time)
     end
 
     private

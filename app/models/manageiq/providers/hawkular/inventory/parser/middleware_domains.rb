@@ -35,12 +35,16 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
       collection = persister.middleware_domains
       fetch_availabilities_for(collector.domains, collection, collection.model_class::AVAIL_TYPE_ID) do |domain, availability|
         domain.properties['Availability'] =
-          process_domain_availability(availability.try(:[], 'data').try(:first))
+          process_domain_availability(availability)
       end
     end
 
     def process_domain_availability(availability = nil)
-      process_availability(availability, 'up' => 'Running', 'down' => 'Stopped')
+      if availability.first['value'] && availability.first['value'][1] == '1'
+        'Running'
+      else
+        'STOPPED'
+      end
     end
 
     def parse_middleware_domain(domain, inventory_object)
