@@ -85,7 +85,7 @@ module ManageIQ::Providers
         end
         unless results.empty?
           datapoint = results.first
-          first = Time.at(datapoint.first.to_i)
+          first = Time.at(datapoint.first.to_i).utc
         end
         if interval_name == "hourly"
           first = (now - first) > 1.hour ? first : nil
