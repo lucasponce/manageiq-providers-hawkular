@@ -87,8 +87,12 @@ module ManageIQ::Providers
     private
 
     def resources_for(resource_type)
-      connection.inventory.resources_for_type(resource_type)
+      begin
+        connection.inventory.resources_for_type(resource_type)
+      rescue => err
+        $mw_log.error(err)
+        []
+      end
     end
-
   end
 end
