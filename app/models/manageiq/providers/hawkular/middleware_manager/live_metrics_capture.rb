@@ -75,7 +75,7 @@ module ManageIQ::Providers
         results = @ems.prometheus_client.up_time(:feed_id => @target.feed,
                                              :starts  => one_week_before.to_i,
                                              :ends    => now.to_i,
-                                             :step    => '3600m')
+                                             :step    => '1440m')
         if results.empty?
           one_day_before = now - ONE_DAY
           results = @ems.prometheus_client.up_time(:feed_id => @target.feed,
@@ -96,12 +96,6 @@ module ManageIQ::Providers
         $mw_log.error(err)
         [nil, nil]
       end
-    end
-  end
-
-  module Hawkular::MiddlewareManager::LiveMetricsCaptureMixin
-    def metrics_capture
-      @metrics_capture ||= ManageIQ::Providers::Hawkular::MiddlewareManager::LiveMetricsCapture.new(self)
     end
   end
 end

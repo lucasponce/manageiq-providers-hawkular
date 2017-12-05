@@ -40,6 +40,7 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     end
 
     def process_domain_availability(availability = nil)
+      return 'unknown' if availability.nil?
       if availability.first['value'] && availability.first['value'][1] == '1'
         'Running'
       else

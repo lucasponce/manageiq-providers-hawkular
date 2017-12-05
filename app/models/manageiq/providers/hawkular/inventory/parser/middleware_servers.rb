@@ -185,6 +185,7 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     end
 
     def process_server_availability(server_state, availability = nil)
+      return ['unknown', 'unknown'] if availability.nil?
       avail = if availability.first['value'] && availability.first['value'][1] == '1'
                 'Running'
               else
