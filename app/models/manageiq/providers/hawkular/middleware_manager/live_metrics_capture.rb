@@ -9,21 +9,25 @@ module ManageIQ::Providers
     def initialize(target)
       @target = target
       @ems = @target.ext_management_system
-      @prometheus_client = @ems.prometheus_client
       @included_children = @target.included_children
       @supported_metrics = @target.supported_metrics
     end
 
     def fetch_metrics_available
-      resource = @included_children ? @ems.resource_tree(@target.ems_ref) : @ems.resource(@target.ems_ref)
-      resource.metrics(!!@included_children)
-              .select { |metric| @supported_metrics[@target.live_metrics_type].key?(metric.name) }
-              .collect do |metric|
-                metric_hash = metric.to_h
-                metric_hash['name'] = @supported_metrics[@target.live_metrics_type][metric.name]
-                metric_hash
-              end
-              .to_a
+      begin
+        resource = @included_children ? @ems.resource_tree(@target.ems_ref) : @ems.resource(@target.ems_ref)
+        resource.metrics(!!@included_children)
+                .select { |metric| @supported_metrics[@target.live_metrics_type].key?(metric.name) }
+                .collect do |metric|
+                  metric_hash = metric.to_h
+                  metric_hash['name'] = @supported_metrics[@target.live_metrics_type][metric.name]
+                  metric_hash
+                end
+                .to_a
+      rescue => err
+        $mw_log.error(err)
+        []
+      end
     end
 
     def collect_stats_metrics(metrics, start_time, end_time, interval)
@@ -31,7 +35,7 @@ module ManageIQ::Providers
       starts = start_time.to_i
       ends = (end_time + interval).to_i + 1
       step = "#{interval}s"
-      results = @prometheus_client.query_range(:metrics => metrics,
+      results = @ems.prometheus_client.query_range(:metrics => metrics,
                                                :starts  => starts,
                                                :ends    => ends,
                                                :step    => step)
@@ -63,36 +67,35 @@ module ManageIQ::Providers
     end
 
     def first_and_last_capture(interval_name = "realtime")
-      now = Time.new.utc
-      one_week_before = now - ONE_WEEK
-      last = now
-      first = now
-      results = @prometheus_client.up_time(:feed_id => @target.feed,
-                                           :starts  => one_week_before.to_i,
-                                           :ends    => now.to_i,
-                                           :step    => '3600m')
-      if results.empty?
-        one_day_before = now - ONE_DAY
-        results = @prometheus_client.up_time(:feed_id => @target.feed,
-                                             :starts  => one_day_before.to_i,
+      begin
+        now = Time.new.utc
+        one_week_before = now - ONE_WEEK
+        last = now
+        first = now
+        results = @ems.prometheus_client.up_time(:feed_id => @target.feed,
+                                             :starts  => one_week_before.to_i,
                                              :ends    => now.to_i,
-                                             :step    => '60m')
+                                             :step    => '1440m')
+        if results.empty?
+          one_day_before = now - ONE_DAY
+          results = @ems.prometheus_client.up_time(:feed_id => @target.feed,
+                                               :starts  => one_day_before.to_i,
+                                               :ends    => now.to_i,
+                                               :step    => '60m')
+        end
+        unless results.empty?
+          datapoint = results.first
+          first = Time.at(datapoint.first.to_i).utc
+        end
+        if interval_name == "hourly"
+          first = (now - first) > 1.hour ? first : nil
+        end
+        $mw_log.debug("first_and_last_capture [first, last] #{[first, last]}")
+        [first, last]
+      rescue => err
+        $mw_log.error(err)
+        [nil, nil]
       end
-      unless results.empty?
-        datapoint = results.first
-        first = Time.at(datapoint.first.to_i)
-      end
-      if interval_name == "hourly"
-        first = (now - first) > 1.hour ? first : nil
-      end
-      $mw_log.debug("first_and_last_capture [first, last] #{[first, last]}")
-      [first, last]
-    end
-  end
-
-  module Hawkular::MiddlewareManager::LiveMetricsCaptureMixin
-    def metrics_capture
-      @metrics_capture ||= ManageIQ::Providers::Hawkular::MiddlewareManager::LiveMetricsCapture.new(self)
     end
   end
 end

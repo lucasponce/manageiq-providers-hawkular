@@ -9,6 +9,7 @@ module ManageIQ::Providers
     require_nested :AlertProfileManager
     require_nested :EventCatcher
     require_nested :LiveMetricsCapture
+    require_nested :LiveMetricsCaptureMixin
     require_nested :MiddlewareDeployment
     require_nested :MiddlewareDatasource
     require_nested :MiddlewareMessaging
@@ -59,11 +60,15 @@ module ManageIQ::Providers
       begin
         # As the connect will only give a handle
         # we verify the credentials via an actual operation
+        component_message = "Hawkular Services using #{hostname}:#{port}"
         connect(options).inventory.root_resources
+        prometheus_entrypoint = prometheus_client.entrypoint
+        component_message = "Prometheus using #{prometheus_entrypoint}"
+        prometheus_client.ping
       rescue URI::InvalidComponentError
         raise MiqException::MiqHostError, "Host '#{hostname}' is invalid"
       rescue ::Hawkular::ConnectionException
-        raise MiqException::MiqUnreachableError, "Unable to connect to #{hostname}:#{port}"
+        raise MiqException::MiqUnreachableError, "Unable to connect to #{component_message}"
       rescue ::Hawkular::Exception => he
         raise MiqException::MiqInvalidCredentialsError, 'Invalid credentials' if he.status_code == 401
         raise MiqException::MiqHostError, 'Hawkular not found on host' if he.status_code == 404

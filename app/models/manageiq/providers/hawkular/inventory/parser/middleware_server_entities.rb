@@ -91,6 +91,7 @@ module ManageIQ::Providers::Hawkular::Inventory::Parser
     end
 
     def process_deployment_availability(availability = nil)
+      return 'unknown' if availability.nil?
       if availability.first['value'] && availability.first['value'][1] == '1'
         'Enabled'
       else
