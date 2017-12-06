@@ -1,190 +1,6 @@
 ---
 http_interactions:
 - request:
-    method: post
-    uri: http://localhost:8080/hawkular/metrics/metrics/stats/query
-    body:
-      encoding: UTF-8
-      string: '{"metrics":{"gauge":["MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Timed Out","MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Average Creation Time","MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~In
-        Use Count"],"counter":[],"availability":[]},"start":1476864000000,"end":1476874800001,"bucketDuration":"3600s","types":["gauge","gauge_rate","counter","counter_rate","availability"]}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
-      Hawkular-Tenant:
-      - hawkular
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '594'
-      Authorization:
-      - Basic amRvZTpwYXNzd29yZA==
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Expires:
-      - '0'
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      X-Powered-By:
-      - Undertow/1
-      Server:
-      - WildFly/10
-      Pragma:
-      - no-cache
-      Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
-      Connection:
-      - keep-alive
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '2210'
-    body:
-      encoding: ASCII-8BIT
-      string: '{"gauge":{"MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Timed Out":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~In
-        Use Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Average
-        Creation Time":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"gauge_rate":{"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Timed
-        Out":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~In
-        Use Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Average
-        Creation Time":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]}}'
-    http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
-- request:
-    method: post
-    uri: http://localhost:8080/hawkular/metrics/metrics/stats/query
-    body:
-      encoding: UTF-8
-      string: '{"metrics":{"gauge":["MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Timed Out","MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Average Creation Time","MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~In
-        Use Count","MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Max Wait Time","MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Available Count","MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Average Get Time"],"counter":[],"availability":[]},"start":1476864000000,"end":1476874800001,"bucketDuration":"3600s","types":["gauge","gauge_rate","counter","counter_rate","availability"]}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
-      Hawkular-Tenant:
-      - hawkular
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '998'
-      Authorization:
-      - Basic amRvZTpwYXNzd29yZA==
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Expires:
-      - '0'
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      X-Powered-By:
-      - Undertow/1
-      Server:
-      - WildFly/10
-      Pragma:
-      - no-cache
-      Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
-      Connection:
-      - keep-alive
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '4398'
-    body:
-      encoding: ASCII-8BIT
-      string: '{"gauge":{"MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Average Get Time":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Timed
-        Out":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~In
-        Use Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Max
-        Wait Time":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Available
-        Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Average
-        Creation Time":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]},"gauge_rate":{"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Average
-        Get Time":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Timed
-        Out":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~In
-        Use Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Max
-        Wait Time":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Available
-        Count":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}],"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Average
-        Creation Time":[{"start":1476864000000,"end":1476867600000,"empty":true},{"start":1476867600000,"end":1476871200000,"empty":true},{"start":1476871200000,"end":1476874800000,"empty":true},{"start":1476874800000,"end":1476878400000,"empty":true}]}}'
-    http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
-- request:
-    method: get
-    uri: http://localhost:8080/hawkular/metrics/status
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
-      Hawkular-Tenant:
-      - hawkular
-      Content-Type:
-      - application/json
-      Authorization:
-      - Basic amRvZTpwYXNzd29yZA==
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Connection:
-      - keep-alive
-      X-Powered-By:
-      - Undertow/1
-      Server:
-      - WildFly/10
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '150'
-      Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
-    body:
-      encoding: ASCII-8BIT
-      string: '{"MetricsService":"STARTED","Implementation-Version":"0.26.2.Final","Built-From-Git-SHA1":"09a20a815fc263ed6556f4cd176bf877114a9392","Cassandra":"up"}'
-    http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
-- request:
     method: get
     uri: http://localhost:8080/hawkular/inventory/status
     body:
@@ -196,7 +12,7 @@ http_interactions:
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
       Hawkular-Tenant:
       - hawkular
       Content-Type:
@@ -219,15 +35,15 @@ http_interactions:
       Content-Length:
       - '173'
       Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
+      - Wed, 06 Dec 2017 22:02:45 GMT
     body:
       encoding: UTF-8
-      string: '{"Implementation-Version":"1.0.0.Final-SRC-revision-055e4393b2a1944cda2d97955ba7771bb61041a6","Built-From-Git-SHA1":"055e4393b2a1944cda2d97955ba7771bb61041a6","status":"UP"}'
+      string: '{"Implementation-Version":"1.0.0.Final-SRC-revision-d27e8a223a015e4f878c2695626bd851ce559925","Built-From-Git-SHA1":"d27e8a223a015e4f878c2695626bd851ce559925","status":"UP"}'
     http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
+  recorded_at: Wed, 06 Dec 2017 22:02:45 GMT
 - request:
     method: get
-    uri: http://localhost:8080/hawkular/inventory/resources/wf-standalone~Local%20DMR~%2Fsubsystem=datasources%2Fdata-source=ExampleDS
+    uri: http://localhost:8080/hawkular/inventory/resources/wf-standalone~Local~%2Fsubsystem=datasources%2Fdata-source=ExampleDS
     body:
       encoding: US-ASCII
       string: ''
@@ -237,7 +53,7 @@ http_interactions:
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
       Hawkular-Tenant:
       - hawkular
       Content-Type:
@@ -260,125 +76,61 @@ http_interactions:
       Pragma:
       - no-cache
       Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
+      - Wed, 06 Dec 2017 22:02:45 GMT
       Connection:
       - keep-alive
       Content-Type:
       - application/json
       Content-Length:
-      - '9744'
+      - '7981'
     body:
       encoding: UTF-8
-      string: '{"id":"wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS","name":"ExampleDS","feedId":"wf-standalone","type":{"id":"Datasource","operations":[],"properties":{}},"parentId":"wf-standalone~Local
-        DMR~~","metrics":[{"name":"Max Get Time","type":"Max Get Time","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Max Get Time","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Max
-        Get Time"}},{"name":"Timed Out","type":"Timed Out","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Timed Out","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Timed
-        Out"}},{"name":"Total Get Time","type":"Total Get Time","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Total Get Time","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Total
-        Get Time"}},{"name":"Wait Count","type":"Wait Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Wait Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Wait
-        Count"}},{"name":"Total Creation Time","type":"Total Creation Time","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Total Creation Time","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Total
-        Creation Time"}},{"name":"Prepared Statement Cache Hit Count","type":"Prepared
-        Statement Cache Hit Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        JDBC Metrics~Prepared Statement Cache Hit Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource JDBC Metrics~Prepared
-        Statement Cache Hit Count"}},{"name":"Created Count","type":"Created Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Created Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Created
-        Count"}},{"name":"Average Creation Time","type":"Average Creation Time","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Average Creation Time","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Average
-        Creation Time"}},{"name":"Max Used Count","type":"Max Used Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Max Used Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Max
-        Used Count"}},{"name":"Total Blocking Time","type":"Total Blocking Time","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Total Blocking Time","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Total
-        Blocking Time"}},{"name":"Prepared Statement Cache Access Count","type":"Prepared
-        Statement Cache Access Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        JDBC Metrics~Prepared Statement Cache Access Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource JDBC Metrics~Prepared
-        Statement Cache Access Count"}},{"name":"In Use Count","type":"In Use Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~In Use Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~In
-        Use Count"}},{"name":"Prepared Statement Cache Current Size","type":"Prepared
-        Statement Cache Current Size","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        JDBC Metrics~Prepared Statement Cache Current Size","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource JDBC Metrics~Prepared
-        Statement Cache Current Size"}},{"name":"Idle Count","type":"Idle Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Idle Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Idle
-        Count"}},{"name":"Prepared Statement Cache Delete Count","type":"Prepared
-        Statement Cache Delete Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        JDBC Metrics~Prepared Statement Cache Delete Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource JDBC Metrics~Prepared
-        Statement Cache Delete Count"}},{"name":"Prepared Statement Cache Miss Count","type":"Prepared
-        Statement Cache Miss Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        JDBC Metrics~Prepared Statement Cache Miss Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource JDBC Metrics~Prepared
-        Statement Cache Miss Count"}},{"name":"Blocking Failure Count","type":"Blocking
-        Failure Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Blocking Failure Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Blocking
-        Failure Count"}},{"name":"Max Wait Time","type":"Max Wait Time","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Max Wait Time","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Max
-        Wait Time"}},{"name":"Available Count","type":"Available Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Available Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Available
-        Count"}},{"name":"Prepared Statement Cache Add Count","type":"Prepared Statement
-        Cache Add Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        JDBC Metrics~Prepared Statement Cache Add Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource JDBC Metrics~Prepared
-        Statement Cache Add Count"}},{"name":"Average Blocking Time","type":"Average
-        Blocking Time","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Average Blocking Time","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Average
-        Blocking Time"}},{"name":"Max Creation Time","type":"Max Creation Time","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Max Creation Time","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Max
-        Creation Time"}},{"name":"Max Wait Count","type":"Max Wait Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Max Wait Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Max
-        Wait Count"}},{"name":"Average Get Time","type":"Average Get Time","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Average Get Time","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Average
-        Get Time"}},{"name":"Active Count","type":"Active Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Active Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Active
-        Count"}},{"name":"Destroyed Count","type":"Destroyed Count","unit":"NONE","properties":{"hawkular.metric.typeId":"Datasource
-        Pool Metrics~Destroyed Count","hawkular.metric.type":"GAUGE","hawkular.metric.id":"MI~R~[wf-standalone/wf-standalone~Local
-        DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource Pool Metrics~Destroyed
-        Count"}}],"properties":{},"config":{"Connection Properties":null,"Datasource
-        Class":null,"Security Domain":null,"Username":"sa","Driver Name":"h2","JNDI
-        Name":"java:jboss/datasources/ExampleDS","Connection URL":"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE","Enabled":"true","Driver
+      string: '{"id":"wf-standalone~Local~/subsystem=datasources/data-source=ExampleDS","name":"ExampleDS","feedId":"wf-standalone","type":{"id":"Datasource
+        WF10","operations":[],"properties":{}},"parentId":"wf-standalone~Local~~","metrics":[{"displayName":"Prepared
+        Statement Cache Hit Count","family":"wildfly_datasource_jdbc_prepared_statement_cache_hit_count","unit":"NONE","expression":"wildfly_datasource_jdbc_prepared_statement_cache_hit_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Max
+        Wait Time","family":"wildfly_datasource_pool_max_wait_time","unit":"NONE","expression":"wildfly_datasource_pool_max_wait_time{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Total
+        Blocking Time","family":"wildfly_datasource_pool_total_blocking_time","unit":"NONE","expression":"wildfly_datasource_pool_total_blocking_time{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"In
+        Use Count","family":"wildfly_datasource_pool_in_use_count","unit":"NONE","expression":"wildfly_datasource_pool_in_use_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Prepared
+        Statement Cache Delete Count","family":"wildfly_datasource_jdbc_prepared_statement_cache_delete_count","unit":"NONE","expression":"wildfly_datasource_jdbc_prepared_statement_cache_delete_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Prepared
+        Statement Cache Add Count","family":"wildfly_datasource_jdbc_prepared_statement_cache_add_count","unit":"NONE","expression":"wildfly_datasource_jdbc_prepared_statement_cache_add_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Max
+        Used Count","family":"wildfly_datasource_pool_max_used_count","unit":"NONE","expression":"wildfly_datasource_pool_max_used_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Total
+        Get Time","family":"wildfly_datasource_pool_total_get_time","unit":"NONE","expression":"wildfly_datasource_pool_total_get_time{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Prepared
+        Statement Cache Access Count","family":"wildfly_datasource_jdbc_prepared_statement_cache_access_count","unit":"NONE","expression":"wildfly_datasource_jdbc_prepared_statement_cache_access_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Average
+        Creation Time","family":"wildfly_datasource_pool_average_creation_time","unit":"NONE","expression":"wildfly_datasource_pool_average_creation_time{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Max
+        Get Time","family":"wildfly_datasource_pool_max_get_time","unit":"NONE","expression":"wildfly_datasource_pool_max_get_time{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Max
+        Wait Count","family":"wildfly_datasource_pool_max_wait_count","unit":"NONE","expression":"wildfly_datasource_pool_max_wait_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Blocking
+        Failure Count","family":"wildfly_datasource_pool_blocking_failure_count","unit":"NONE","expression":"wildfly_datasource_pool_blocking_failure_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Average
+        Blocking Time","family":"wildfly_datasource_pool_average_blocking_time","unit":"NONE","expression":"wildfly_datasource_pool_average_blocking_time{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Prepared
+        Statement Cache Miss Count","family":"wildfly_datasource_jdbc_prepared_statement_cache_miss_count","unit":"NONE","expression":"wildfly_datasource_jdbc_prepared_statement_cache_miss_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Created
+        Count","family":"wildfly_datasource_pool_created_count","unit":"NONE","expression":"wildfly_datasource_pool_created_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Average
+        Get Time","family":"wildfly_datasource_pool_average_get_time","unit":"NONE","expression":"wildfly_datasource_pool_average_get_time{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Active
+        Count","family":"wildfly_datasource_pool_active_count","unit":"NONE","expression":"wildfly_datasource_pool_active_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Prepared
+        Statement Cache Current Size","family":"wildfly_datasource_jdbc_prepared_statement_cache_current_size","unit":"NONE","expression":"wildfly_datasource_jdbc_prepared_statement_cache_current_size{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Idle
+        Count","family":"wildfly_datasource_pool_idle_count","unit":"NONE","expression":"wildfly_datasource_pool_idle_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Timed
+        Out","family":"wildfly_datasource_pool_timed_out","unit":"NONE","expression":"wildfly_datasource_pool_timed_out{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Max
+        Creation Time","family":"wildfly_datasource_pool_max_creation_time","unit":"NONE","expression":"wildfly_datasource_pool_max_creation_time{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Destroyed
+        Count","family":"wildfly_datasource_pool_destroyed_count","unit":"NONE","expression":"wildfly_datasource_pool_destroyed_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Wait
+        Count","family":"wildfly_datasource_pool_wait_count","unit":"NONE","expression":"wildfly_datasource_pool_wait_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Total
+        Creation Time","family":"wildfly_datasource_pool_total_creation_time","unit":"NONE","expression":"wildfly_datasource_pool_total_creation_time{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}},{"displayName":"Available
+        Count","family":"wildfly_datasource_pool_available_count","unit":"NONE","expression":"wildfly_datasource_pool_available_count{name=\"ExampleDS\",feed_id=\"wf-standalone\"}","labels":{"name":"ExampleDS","feed_id":"wf-standalone"},"properties":{}}],"properties":{},"config":{"Connection
+        Properties":null,"Datasource Class":null,"Security Domain":null,"Username":"sa","Driver
+        Name":"h2","JNDI Name":"java:jboss/datasources/ExampleDS","Connection URL":"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE","Enabled":"true","Driver
         Class":null,"Password":"sa"}}'
     http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
+  recorded_at: Wed, 06 Dec 2017 22:02:45 GMT
 - request:
     method: get
-    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bwf-standalone%2Fwf-standalone~Local%20DMR~%2Fsubsystem=datasources%2Fdata-source=ExampleDS%5D~MT~Datasource%20Pool%20Metrics~Timed%20Out
+    uri: http://localhost:8080/hawkular/alerter/prometheus/endpoint
     body:
       encoding: US-ASCII
       string: ''
     headers:
       Accept:
-      - application/json
+      - "*/*"
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
-      Hawkular-Tenant:
-      - hawkular
-      Content-Type:
-      - application/json
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
       Authorization:
       - Basic amRvZTpwYXNzd29yZA==
   response:
@@ -386,33 +138,26 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Expires:
-      - '0'
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
+      Connection:
+      - keep-alive
       X-Powered-By:
       - Undertow/1
       Server:
       - WildFly/10
-      Pragma:
-      - no-cache
-      Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
-      Connection:
-      - keep-alive
       Content-Type:
       - application/json
       Content-Length:
-      - '249'
+      - '21'
+      Date:
+      - Wed, 06 Dec 2017 22:02:45 GMT
     body:
-      encoding: ASCII-8BIT
-      string: '{"id":"MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Timed Out","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1510770160017,"maxTimestamp":1510772480010}'
+      encoding: UTF-8
+      string: http://localhost:9090
     http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
+  recorded_at: Wed, 06 Dec 2017 22:02:45 GMT
 - request:
     method: get
-    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bwf-standalone%2Fwf-standalone~Local%20DMR~%2Fsubsystem=datasources%2Fdata-source=ExampleDS%5D~MT~Datasource%20Pool%20Metrics~Average%20Creation%20Time
+    uri: http://localhost:9090/api/v1/query_range?end=1512572401&query=wildfly_datasource_pool_max_wait_time%7Bname=%22ExampleDS%22,feed_id=%22wf-standalone%22%7D&start=1512561600&step=3600s
     body:
       encoding: US-ASCII
       string: ''
@@ -422,7 +167,7 @@ http_interactions:
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
       Hawkular-Tenant:
       - hawkular
       Content-Type:
@@ -434,33 +179,28 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Expires:
-      - '0'
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      X-Powered-By:
-      - Undertow/1
-      Server:
-      - WildFly/10
-      Pragma:
-      - no-cache
-      Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
-      Connection:
-      - keep-alive
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, Origin
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Date
       Content-Type:
       - application/json
+      Date:
+      - Wed, 06 Dec 2017 22:02:45 GMT
       Content-Length:
-      - '261'
+      - '244'
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Average Creation Time","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1510770160042,"maxTimestamp":1510772480020}'
+      string: '{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"wildfly_datasource_pool_max_wait_time","feed_id":"wf-standalone","instance":"127.0.0.1:9779","job":"hawkular","name":"ExampleDS"},"values":[[1512572400,"0"]]}]}}'
     http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
+  recorded_at: Wed, 06 Dec 2017 22:02:45 GMT
 - request:
     method: get
-    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bwf-standalone%2Fwf-standalone~Local%20DMR~%2Fsubsystem=datasources%2Fdata-source=ExampleDS%5D~MT~Datasource%20Pool%20Metrics~In%20Use%20Count
+    uri: http://localhost:9090/api/v1/query_range?end=1512572401&query=wildfly_datasource_pool_in_use_count%7Bname=%22ExampleDS%22,feed_id=%22wf-standalone%22%7D&start=1512561600&step=3600s
     body:
       encoding: US-ASCII
       string: ''
@@ -470,7 +210,7 @@ http_interactions:
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
       Hawkular-Tenant:
       - hawkular
       Content-Type:
@@ -482,33 +222,71 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Expires:
-      - '0'
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      X-Powered-By:
-      - Undertow/1
-      Server:
-      - WildFly/10
-      Pragma:
-      - no-cache
-      Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
-      Connection:
-      - keep-alive
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, Origin
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Date
       Content-Type:
       - application/json
+      Date:
+      - Wed, 06 Dec 2017 22:02:45 GMT
+      Content-Length:
+      - '243'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"wildfly_datasource_pool_in_use_count","feed_id":"wf-standalone","instance":"127.0.0.1:9779","job":"hawkular","name":"ExampleDS"},"values":[[1512572400,"0"]]}]}}'
+    http_version: 
+  recorded_at: Wed, 06 Dec 2017 22:02:45 GMT
+- request:
+    method: get
+    uri: http://localhost:9090/api/v1/query_range?end=1512572401&query=wildfly_datasource_pool_average_creation_time%7Bname=%22ExampleDS%22,feed_id=%22wf-standalone%22%7D&start=1512561600&step=3600s
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, Origin
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Date
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 06 Dec 2017 22:02:45 GMT
       Content-Length:
       - '252'
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~In Use Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1510770160067,"maxTimestamp":1510772480015}'
+      string: '{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"wildfly_datasource_pool_average_creation_time","feed_id":"wf-standalone","instance":"127.0.0.1:9779","job":"hawkular","name":"ExampleDS"},"values":[[1512572400,"0"]]}]}}'
     http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
+  recorded_at: Wed, 06 Dec 2017 22:02:45 GMT
 - request:
     method: get
-    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bwf-standalone%2Fwf-standalone~Local%20DMR~%2Fsubsystem=datasources%2Fdata-source=ExampleDS%5D~MT~Datasource%20Pool%20Metrics~Max%20Wait%20Time
+    uri: http://localhost:9090/api/v1/query_range?end=1512572401&query=wildfly_datasource_pool_average_get_time%7Bname=%22ExampleDS%22,feed_id=%22wf-standalone%22%7D&start=1512561600&step=3600s
     body:
       encoding: US-ASCII
       string: ''
@@ -518,7 +296,7 @@ http_interactions:
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
       Hawkular-Tenant:
       - hawkular
       Content-Type:
@@ -530,33 +308,28 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Expires:
-      - '0'
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      X-Powered-By:
-      - Undertow/1
-      Server:
-      - WildFly/10
-      Pragma:
-      - no-cache
-      Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
-      Connection:
-      - keep-alive
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, Origin
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Date
       Content-Type:
       - application/json
+      Date:
+      - Wed, 06 Dec 2017 22:02:45 GMT
       Content-Length:
-      - '253'
+      - '247'
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Max Wait Time","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1510770150020,"maxTimestamp":1510772489007}'
+      string: '{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"wildfly_datasource_pool_average_get_time","feed_id":"wf-standalone","instance":"127.0.0.1:9779","job":"hawkular","name":"ExampleDS"},"values":[[1512572400,"0"]]}]}}'
     http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
+  recorded_at: Wed, 06 Dec 2017 22:02:45 GMT
 - request:
     method: get
-    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bwf-standalone%2Fwf-standalone~Local%20DMR~%2Fsubsystem=datasources%2Fdata-source=ExampleDS%5D~MT~Datasource%20Pool%20Metrics~Available%20Count
+    uri: http://localhost:9090/api/v1/query_range?end=1512572401&query=wildfly_datasource_pool_timed_out%7Bname=%22ExampleDS%22,feed_id=%22wf-standalone%22%7D&start=1512561600&step=3600s
     body:
       encoding: US-ASCII
       string: ''
@@ -566,7 +339,7 @@ http_interactions:
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
       Hawkular-Tenant:
       - hawkular
       Content-Type:
@@ -578,33 +351,28 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Expires:
-      - '0'
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      X-Powered-By:
-      - Undertow/1
-      Server:
-      - WildFly/10
-      Pragma:
-      - no-cache
-      Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
-      Connection:
-      - keep-alive
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, Origin
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Date
       Content-Type:
       - application/json
+      Date:
+      - Wed, 06 Dec 2017 22:02:45 GMT
       Content-Length:
-      - '255'
+      - '240'
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Available Count","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1510770160039,"maxTimestamp":1510772480017}'
+      string: '{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"wildfly_datasource_pool_timed_out","feed_id":"wf-standalone","instance":"127.0.0.1:9779","job":"hawkular","name":"ExampleDS"},"values":[[1512572400,"0"]]}]}}'
     http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
+  recorded_at: Wed, 06 Dec 2017 22:02:45 GMT
 - request:
     method: get
-    uri: http://localhost:8080/hawkular/metrics/gauges/MI~R~%5Bwf-standalone%2Fwf-standalone~Local%20DMR~%2Fsubsystem=datasources%2Fdata-source=ExampleDS%5D~MT~Datasource%20Pool%20Metrics~Average%20Get%20Time
+    uri: http://localhost:9090/api/v1/query_range?end=1512572401&query=wildfly_datasource_pool_available_count%7Bname=%22ExampleDS%22,feed_id=%22wf-standalone%22%7D&start=1512561600&step=3600s
     body:
       encoding: US-ASCII
       string: ''
@@ -614,7 +382,7 @@ http_interactions:
       Accept-Encoding:
       - gzip, deflate
       User-Agent:
-      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.3.3p222
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
       Hawkular-Tenant:
       - hawkular
       Content-Type:
@@ -626,28 +394,103 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Expires:
-      - '0'
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, Origin
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Date
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 06 Dec 2017 22:02:45 GMT
+      Content-Length:
+      - '246'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"wildfly_datasource_pool_available_count","feed_id":"wf-standalone","instance":"127.0.0.1:9779","job":"hawkular","name":"ExampleDS"},"values":[[1512572400,"0"]]}]}}'
+    http_version: 
+  recorded_at: Wed, 06 Dec 2017 22:02:45 GMT
+- request:
+    method: get
+    uri: http://localhost:8080/hawkular/alerter/prometheus/endpoint
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
       X-Powered-By:
       - Undertow/1
       Server:
       - WildFly/10
-      Pragma:
-      - no-cache
-      Date:
-      - Wed, 15 Nov 2017 19:01:29 GMT
-      Connection:
-      - keep-alive
       Content-Type:
       - application/json
       Content-Length:
-      - '256'
+      - '21'
+      Date:
+      - Wed, 06 Dec 2017 22:11:20 GMT
+    body:
+      encoding: UTF-8
+      string: http://localhost:9090
+    http_version: 
+  recorded_at: Wed, 06 Dec 2017 22:11:20 GMT
+- request:
+    method: get
+    uri: http://localhost:9090/api/v1/query_range?end=1512598280&query=up%7Bfeed_id=%22%22%7D&start=1511993480&step=1440m
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
+      Hawkular-Tenant:
+      - hawkular
+      Content-Type:
+      - application/json
+      Authorization:
+      - Basic amRvZTpwYXNzd29yZA==
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Accept, Authorization, Content-Type, Origin
+      Access-Control-Allow-Methods:
+      - GET, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Date
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 06 Dec 2017 22:11:20 GMT
+      Content-Length:
+      - '166'
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"MI~R~[wf-standalone/wf-standalone~Local DMR~/subsystem=datasources/data-source=ExampleDS]~MT~Datasource
-        Pool Metrics~Average Get Time","dataRetention":14,"type":"gauge","tenantId":"hawkular","minTimestamp":1510770160051,"maxTimestamp":1510772480009}'
+      string: '{"status":"success","data":{"resultType":"matrix","result":[{"metric":{"__name__":"up","instance":"localhost:9090","job":"prometheus"},"values":[[151250000,"1"],[1512598280,"1"]]}]}}'
     http_version: 
-  recorded_at: Wed, 15 Nov 2017 19:01:29 GMT
+  recorded_at: Wed, 06 Dec 2017 22:11:20 GMT
 recorded_with: VCR 3.0.3
