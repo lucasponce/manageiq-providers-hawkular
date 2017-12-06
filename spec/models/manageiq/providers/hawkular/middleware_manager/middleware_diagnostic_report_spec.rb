@@ -79,7 +79,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDiagnosticR
       FactoryGirl.create(
         :hawkular_middleware_server,
         :ext_management_system => ems,
-        :ems_ref               => 'hawk_ref'
+        :ems_ref               => 'hawk_ref',
+        :feed                  => 'feed'
       )
     end
     let(:hawkular_operations_client_stub) do
@@ -101,7 +102,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDiagnosticR
     end
 
     it 'should invoke report generation to Hawkular client and assign running status' do
-      expect(hawkular_operations_client_stub).to receive(:export_jdr).with('hawk_ref', true) do
+      expect(hawkular_operations_client_stub).to receive(:export_jdr).with('hawk_ref', 'feed', true) do
         report.instance_variable_get('@finish_signal') << 1
       end
 
@@ -110,10 +111,9 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDiagnosticR
     end
 
     it 'should assign ready status and save report if jdr generation succeeds' do
-      expect(hawkular_operations_client_stub).to receive(:export_jdr).with('hawk_ref', true) do |&blk|
+      expect(hawkular_operations_client_stub).to receive(:export_jdr).with('hawk_ref', 'feed', true) do |&blk|
         blk.perform(:success, 'fileName' => 'jdr_report', :attachments => 'jdr_report_data')
       end
-
       report.generate_diagnostic_report
       expect(report.status).to be == described_class::STATUS_READY
       expect(report.binary_blob).to_not be_blank
@@ -121,7 +121,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDiagnosticR
     end
 
     it 'should assign error status and save error message if jdr generation fails' do
-      expect(hawkular_operations_client_stub).to receive(:export_jdr).with('hawk_ref', true) do |&blk|
+      expect(hawkular_operations_client_stub).to receive(:export_jdr).with('hawk_ref', 'feed', true) do |&blk|
         blk.perform(:failure, 'jdr_report_error')
       end
 
