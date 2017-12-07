@@ -29,7 +29,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDatasource 
   let(:ds) do
     FactoryGirl.create(:hawkular_middleware_datasource,
                        :name                  => 'ExampleDS',
-                       :ems_ref               => "#{the_feed_id}~Local DMR~/subsystem=datasources/data-source=ExampleDS",
+                       :ems_ref               => "#{the_feed_id}~Local~/subsystem=datasources/data-source=ExampleDS",
                        :ext_management_system => ems_hawkular,
                        :middleware_server     => eap,
                        :properties            => {
@@ -93,6 +93,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDatasource 
   it "#first_and_last_capture" do
     VCR.use_cassette(described_class.name.underscore.to_s,
                      :allow_unused_http_interactions => true,
+                     :match_requests_on              => [:method, VCR.request_matchers.uri_without_params(:end,:start)],
                      :decode_compressed_response     => true) do # , :record => :new_episodes) do
       capture = ds.first_and_last_capture
       expect(capture.any?).to be true
@@ -102,18 +103,18 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDatasource 
 
   it "#supported_metrics" do
     expected_metrics = {
-      "Datasource Pool Metrics~Available Count"       => "mw_ds_available_count",
-      "Datasource Pool Metrics~In Use Count"          => "mw_ds_in_use_count",
-      "Datasource Pool Metrics~Timed Out"             => "mw_ds_timed_out",
-      "Datasource Pool Metrics~Average Get Time"      => "mw_ds_average_get_time",
-      "Datasource Pool Metrics~Average Creation Time" => "mw_ds_average_creation_time",
-      "Datasource Pool Metrics~Max Wait Time"         => "mw_ds_max_wait_time"
+      "Available Count"       => "mw_ds_available_count",
+      "In Use Count"          => "mw_ds_in_use_count",
+      "Timed Out"             => "mw_ds_timed_out",
+      "Average Get Time"      => "mw_ds_average_get_time",
+      "Average Creation Time" => "mw_ds_average_creation_time",
+      "Max Wait Time"         => "mw_ds_max_wait_time"
     }.freeze
-    supported_metrics = ds.supported_metrics
+    supported_metrics = ds.supported_metrics['default']
     expected_metrics.each { |k, v| expect(supported_metrics[k]).to eq(v) }
 
     _model, model_config = MiddlewareDatasource.live_metrics_config.first
-    supported_metrics = model_config['supported_metrics']
+    supported_metrics = model_config['default']
     expected_metrics.each { |k, v| expect(supported_metrics[k]).to eq(v) }
   end
 end
