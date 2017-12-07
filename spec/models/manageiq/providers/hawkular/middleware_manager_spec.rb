@@ -104,7 +104,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
             callback.perform(:success, nil)
           end
 
-          ems.public_send("#{operation}_middleware_server", mw_server.ems_ref)
+          ems.public_send("#{operation}_middleware_server", mw_server.ems_ref, mw_server.feed)
           queue = MiqQueue.last
           expect(queue).not_to be_nil
           queue.deliver
@@ -119,7 +119,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
             callback.perform(:failure, 'Error')
           end
 
-          ems.public_send("#{operation}_middleware_server", mw_server.ems_ref)
+          ems.public_send("#{operation}_middleware_server", mw_server.ems_ref, mw_server.feed)
           queue = MiqQueue.last
           expect(queue).not_to be_nil
           queue.deliver
@@ -139,7 +139,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
           end
 
           ems.public_send("#{operation}_middleware_domain_server",
-                          mw_domain_server.ems_ref.sub(/%2Fserver%3D/, '%2Fserver-config%3D'),
+                          mw_domain_server.ems_ref,
+                          mw_domain_server.feed,
                           {},
                           :original_resource_id => mw_domain_server.ems_ref)
           queue = MiqQueue.last
@@ -157,7 +158,8 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
           end
 
           ems.public_send("#{operation}_middleware_domain_server",
-                          mw_domain_server.ems_ref.sub(/%2Fserver%3D/, '%2Fserver-config%3D'),
+                          mw_domain_server.ems_ref,
+                          mw_domain_server.feed,
                           {},
                           :original_resource_id => mw_domain_server.ems_ref)
 
@@ -178,7 +180,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
           callback.perform(:success, nil)
         end
 
-        ems.stop_middleware_server(mw_domain.ems_ref)
+        ems.stop_middleware_server(mw_domain.ems_ref, mw_domain.feed)
         MiqQueue.last.deliver
 
         notification_expectations(mw_domain, :Stop, 'mw_op_success')
@@ -190,7 +192,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
           callback.perform(:failure, nil)
         end
 
-        ems.stop_middleware_server(mw_domain.ems_ref)
+        ems.stop_middleware_server(mw_domain.ems_ref, mw_domain.feed)
         MiqQueue.last.deliver
 
         notification_expectations(mw_domain, :Stop, 'mw_op_failure')
