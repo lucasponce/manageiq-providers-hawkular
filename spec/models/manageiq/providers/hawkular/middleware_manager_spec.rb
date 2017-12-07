@@ -142,7 +142,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
                           mw_domain_server.ems_ref,
                           mw_domain_server.feed,
                           {},
-                          :original_resource_id => mw_domain_server.ems_ref)
+                          {:original_resource_id => mw_domain_server.ems_ref})
           queue = MiqQueue.last
           expect(queue).not_to be_nil
           queue.deliver
@@ -161,7 +161,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager do
                           mw_domain_server.ems_ref,
                           mw_domain_server.feed,
                           {},
-                          :original_resource_id => mw_domain_server.ems_ref)
+                          {:original_resource_id => mw_domain_server.ems_ref})
 
           queue = MiqQueue.last
           expect(queue).not_to be_nil
