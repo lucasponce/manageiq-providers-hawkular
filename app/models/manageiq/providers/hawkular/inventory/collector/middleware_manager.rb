@@ -15,7 +15,7 @@ module ManageIQ::Providers
     def oss
       oss = []
       Hawkular::MiddlewareManager::SUPPORTED_VERSIONS.each do |version|
-        oss.concat(resources_for("Platform_Operating System #{version}"))
+        oss.concat(resources_for("Platform Operating System #{version}"))
       end
       oss
     end
