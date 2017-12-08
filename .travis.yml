@@ -11,5 +11,11 @@ env:
   - RUBY_GC_HEAP_GROWTH_FACTOR=1.25
 addons:
   postgresql: '9.4'
-install: bin/setup
+install:
+  - bin/setup
+  - git fetch origin hawkular-1328 && git branch hawkular-1328 FETCH_HEAD
+  - gem install pronto-rubocop
+script:
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then pronto run -c hawkular-1328; fi
+  - bundle exec rake
 after_script: bundle exec codeclimate-test-reporter
