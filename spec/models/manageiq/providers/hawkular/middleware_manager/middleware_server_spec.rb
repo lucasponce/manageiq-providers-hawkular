@@ -30,29 +30,29 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareServer do
 
   let(:expected_metrics) do
     {
-      "Heap Used"                                  => "mw_heap_used",
-      "Heap Max"                                   => "mw_heap_max",
-      "Heap Committed"                             => "mw_heap_committed",
-      "NonHeap Used"                               => "mw_non_heap_used",
-      "NonHeap Committed"                          => "mw_non_heap_committed",
-      "Accumulated GC Duration"                    => "mw_accumulated_gc_duration",
-      "Aggregated Servlet Request Time"            => "mw_aggregated_servlet_time",
-      "Aggregated Servlet Request Count"           => "mw_aggregated_servlet_request_count",
-      "Aggregated Expired Web Sessions"            => "mw_aggregated_expired_web_sessions",
-      "Aggregated Max Active Web Sessions"         => "mw_aggregated_max_active_web_sessions",
-      "Aggregated Active Web Sessions"             => "mw_aggregated_active_web_sessions",
-      "Aggregated Rejected Web Sessions"           => "mw_aggregated_rejected_web_sessions",
-      "Thread Count"                               => "mw_thread_count",
-      "App Server"                                 => "mw_availability_app_server",
-      "Number of Aborted Transactions"             => "mw_tx_aborted",
-      "Number of In-Flight Transactions"           => "mw_tx_inflight",
-      "Number of Committed Transactions"           => "mw_tx_committed",
-      "Number of Transactions"                     => "mw_tx_total",
-      "Number of Application Rollbacks"            => "mw_tx_application_rollbacks",
-      "Number of Resource Rollbacks"               => "mw_tx_resource_rollbacks",
-      "Number of Timed Out Transactions"           => "mw_tx_timeout",
-      "Number of Nested Transactions"              => "mw_tx_nested",
-      "Number of Heuristics"                       => "mw_tx_heuristics"
+      "Heap Used"                          => "mw_heap_used",
+      "Heap Max"                           => "mw_heap_max",
+      "Heap Committed"                     => "mw_heap_committed",
+      "NonHeap Used"                       => "mw_non_heap_used",
+      "NonHeap Committed"                  => "mw_non_heap_committed",
+      "Accumulated GC Duration"            => "mw_accumulated_gc_duration",
+      "Aggregated Servlet Request Time"    => "mw_aggregated_servlet_time",
+      "Aggregated Servlet Request Count"   => "mw_aggregated_servlet_request_count",
+      "Aggregated Expired Web Sessions"    => "mw_aggregated_expired_web_sessions",
+      "Aggregated Max Active Web Sessions" => "mw_aggregated_max_active_web_sessions",
+      "Aggregated Active Web Sessions"     => "mw_aggregated_active_web_sessions",
+      "Aggregated Rejected Web Sessions"   => "mw_aggregated_rejected_web_sessions",
+      "Thread Count"                       => "mw_thread_count",
+      "App Server"                         => "mw_availability_app_server",
+      "Number of Aborted Transactions"     => "mw_tx_aborted",
+      "Number of In-Flight Transactions"   => "mw_tx_inflight",
+      "Number of Committed Transactions"   => "mw_tx_committed",
+      "Number of Transactions"             => "mw_tx_total",
+      "Number of Application Rollbacks"    => "mw_tx_application_rollbacks",
+      "Number of Resource Rollbacks"       => "mw_tx_resource_rollbacks",
+      "Number of Timed Out Transactions"   => "mw_tx_timeout",
+      "Number of Nested Transactions"      => "mw_tx_nested",
+      "Number of Heuristics"               => "mw_tx_heuristics"
     }.freeze
   end
 
@@ -109,7 +109,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareServer do
   it "#first_and_last_capture" do
     VCR.use_cassette(described_class.name.underscore.to_s,
                      :allow_unused_http_interactions => true,
-                     :match_requests_on              => [:method, VCR.request_matchers.uri_without_params(:end,:start)],
+                     :match_requests_on              => [:method, VCR.request_matchers.uri_without_params(:end, :start)],
                      :decode_compressed_response     => true) do # , :record => :new_episodes) do
                        capture = eap.first_and_last_capture
                        expect(capture.any?).to be true

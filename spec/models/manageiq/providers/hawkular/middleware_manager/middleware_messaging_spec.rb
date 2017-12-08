@@ -121,7 +121,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareMessaging d
       it "#first_and_last_capture for #{ms_model}" do
         VCR.use_cassette(vcr_cassete_name,
                          :allow_unused_http_interactions => true,
-                         :match_requests_on              => [:method, VCR.request_matchers.uri_without_params(:end,:start)],
+                         :match_requests_on              => [:method, VCR.request_matchers.uri_without_params(:end, :start)],
                          :decode_compressed_response     => true) do # , :record => :new_episodes) do
           capture = ms.first_and_last_capture
           expect(capture.any?).to be true

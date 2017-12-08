@@ -93,7 +93,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDatasource 
   it "#first_and_last_capture" do
     VCR.use_cassette(described_class.name.underscore.to_s,
                      :allow_unused_http_interactions => true,
-                     :match_requests_on              => [:method, VCR.request_matchers.uri_without_params(:end,:start)],
+                     :match_requests_on              => [:method, VCR.request_matchers.uri_without_params(:end, :start)],
                      :decode_compressed_response     => true) do # , :record => :new_episodes) do
       capture = ds.first_and_last_capture
       expect(capture.any?).to be true
