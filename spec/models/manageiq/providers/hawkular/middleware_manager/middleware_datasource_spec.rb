@@ -20,16 +20,16 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareDatasource 
     FactoryGirl.create(:hawkular_middleware_server,
                        :id                    => 1,
                        :name                  => 'Local',
-                       :feed                  => the_feed_id,
-                       :ems_ref               => "#{the_feed_id}~Local~~",
-                       :nativeid              => "#{the_feed_id}~Local~~",
+                       :feed                  => test_mw_manager_feed_id,
+                       :ems_ref               => "#{test_mw_manager_feed_id}~Local~~",
+                       :nativeid              => "#{test_mw_manager_feed_id}~Local~~",
                        :ext_management_system => ems_hawkular)
   end
 
   let(:ds) do
     FactoryGirl.create(:hawkular_middleware_datasource,
                        :name                  => 'ExampleDS',
-                       :ems_ref               => "#{the_feed_id}~Local~/subsystem=datasources/data-source=ExampleDS",
+                       :ems_ref               => "#{test_mw_manager_feed_id}~Local~/subsystem=datasources/data-source=ExampleDS",
                        :ext_management_system => ems_hawkular,
                        :middleware_server     => eap,
                        :properties            => {
