@@ -68,10 +68,8 @@ describe "Alert mgmt flow:" do
 
       # Verify trigger condition was updated in Hawkular
       trigger = alerts_client.get_single_trigger(hawkular_alert_id, true)
-      expect(trigger.conditions.count).to eq(2)
-
-      updated_condition = trigger.conditions.find { |c| c.operator == 'GT' }
-      expect(updated_condition.data2_multiplier).to eq(0.5)
+      expect(trigger.conditions.count).to eq(1)
+      expect trigger.conditions[0].expression.include?('> 0.5')
 
       # STAGE 3
       # Delete alert and notify to EMS
