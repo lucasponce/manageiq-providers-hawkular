@@ -27,43 +27,43 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareMessaging d
                        :ext_management_system => ems_hawkular)
   end
 
-  [:queue, :topic].each do |ms_model|
+  ['JMS Queue WF10', 'JMS Topic WF10'].each do |ms_model|
     describe ms_model do
       let(:ms) do
-        if ms_model == :queue
+        if ms_model == 'JMS Queue WF10'
           FactoryGirl.create(:hawkular_middleware_messaging_initialized_queue,
                              :ems_ref               => "#{test_mw_manager_feed_id}~Local~/subsystem=messaging-activemq/server=default/jms-queue=DLQ",
                              :ext_management_system => ems_hawkular,
                              :middleware_server     => eap,
-                             :messaging_type        => 'JMS Queue')
+                             :messaging_type        => ms_model)
         else
           FactoryGirl.create(:hawkular_middleware_messaging_initialized_topic,
-                             :ems_ref               => "#{test_mw_manager_feed_id}~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularAlertData",
+                             :ems_ref               => "#{test_mw_manager_feed_id}~Local~/subsystem=messaging-activemq/server=default/jms-topic=HawkularCommandEvent",
                              :ext_management_system => ems_hawkular,
                              :middleware_server     => eap,
-                             :messaging_type        => 'JMS Topic')
+                             :messaging_type        => ms_model)
         end
       end
 
       let(:expected_metrics) do
-        if ms_model == :queue
+        if ms_model == 'JMS Queue WF10'
           {
-            "JMS Queue Metrics~Consumer Count"   => "mw_ms_queue_consumer_count",
-            "JMS Queue Metrics~Delivering Count" => "mw_ms_queue_delivering_count",
-            "JMS Queue Metrics~Message Count"    => "mw_ms_queue_message_count",
-            "JMS Queue Metrics~Messages Added"   => "mw_ms_queue_messages_added",
-            "JMS Queue Metrics~Scheduled Count"  => "mw_ms_queue_scheduled_count"
+            "Consumer Count"   => "mw_ms_queue_consumer_count",
+            "Delivering Count" => "mw_ms_queue_delivering_count",
+            "Message Count"    => "mw_ms_queue_message_count",
+            "Messages Added"   => "mw_ms_queue_messages_added",
+            "Scheduled Count"  => "mw_ms_queue_scheduled_count"
           }.freeze
         else
           {
-            "JMS Topic Metrics~Delivering Count"               => "mw_ms_topic_delivering_count",
-            "JMS Topic Metrics~Durable Message Count"          => "mw_ms_topic_durable_message_count",
-            "JMS Topic Metrics~Durable Subscription Count"     => "mw_ms_topic_durable_subscription_count",
-            "JMS Topic Metrics~Message Count"                  => "mw_ms_topic_message_count",
-            "JMS Topic Metrics~Messages Added"                 => "mw_ms_topic_message_added",
-            "JMS Topic Metrics~Non-Durable Message Count"      => "mw_ms_topic_non_durable_message_count",
-            "JMS Topic Metrics~Non-Durable Subscription Count" => "mw_ms_topic_non_durable_subscription_count",
-            "JMS Topic Metrics~Subscription Count"             => "mw_ms_topic_subscription_count"
+            "Delivering Count"               => "mw_ms_topic_delivering_count",
+            "Durable Message Count"          => "mw_ms_topic_durable_message_count",
+            "Durable Subscription Count"     => "mw_ms_topic_durable_subscription_count",
+            "Message Count"                  => "mw_ms_topic_message_count",
+            "Messages Added"                 => "mw_ms_topic_message_added",
+            "Non-Durable Message Count"      => "mw_ms_topic_non_durable_message_count",
+            "Non-Durable Subscription Count" => "mw_ms_topic_non_durable_subscription_count",
+            "Subscription Count"             => "mw_ms_topic_subscription_count"
           }.freeze
         end
       end
@@ -121,6 +121,7 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareMessaging d
       it "#first_and_last_capture for #{ms_model}" do
         VCR.use_cassette(vcr_cassete_name,
                          :allow_unused_http_interactions => true,
+                         :match_requests_on              => [:method, VCR.request_matchers.uri_without_params(:end,:start)],
                          :decode_compressed_response     => true) do # , :record => :new_episodes) do
           capture = ms.first_and_last_capture
           expect(capture.any?).to be true
@@ -129,11 +130,11 @@ describe ManageIQ::Providers::Hawkular::MiddlewareManager::MiddlewareMessaging d
       end
 
       it "#supported_metrics for #{ms_model}" do
-        supported_metrics = ms.supported_metrics
+        supported_metrics = ms.supported_metrics[ms_model]
         expected_metrics.each { |k, v| expect(supported_metrics[k]).to eq(v) }
 
-        model_config = MiddlewareMessaging.live_metrics_config["middleware_messaging_jms_#{ms_model}"]
-        supported_metrics = model_config['supported_metrics']
+        model_config = MiddlewareMessaging.live_metrics_config
+        supported_metrics = model_config['supported_metrics'][ms_model]
         expected_metrics.each { |k, v| expect(supported_metrics[k]).to eq(v) }
       end
     end

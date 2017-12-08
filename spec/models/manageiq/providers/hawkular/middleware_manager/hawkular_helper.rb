@@ -17,11 +17,11 @@ def test_machine_id
 end
 
 def test_start_time
-  Time.new(2017, 12, 06, 12, 0, 0, "+00:00").freeze
+  Time.new(2017, 12, 07, 20, 0, 0, "+00:00").freeze
 end
 
 def test_end_time
-  Time.new(2017, 12, 06, 14, 0, 0, "+00:00").freeze
+  Time.new(2017, 12, 07, 22, 0, 0, "+00:00").freeze
 end
 
 def test_hostname
