@@ -1,27 +1,36 @@
 version: '3'
 
 services:
-  wildfly-domain:
-    image: hawkular/wildfly-hawkular-javaagent:latest
-    hostname: wf-domain
-    environment:
-      - HAWKULAR_MODE=domain
-  wildfly-standalone:
-    image: manageiq/wf-standalone:latest
-    hostname: wf-standalone
+# TODO: Update this as domain mode becomes available
+#  wildfly-domain:
+#    image: hawkular/wildfly-hawkular-javaagent:hawkular-1275
+#    hostname: wf-domain
+#    environment:
+#      - HAWKULAR_MODE=domain
+#  wildfly-standalone:
+#    image: manageiq/wf-standalone:latest
+#    hostname: wf-standalone
   hawkular:
-    image: hawkular/hawkular-services:latest
+    image: hawkular/hawkular-services:hawkular-1275
     hostname: mw-manager
     ports:
       - 8080:8080
+      - 9090:9090
     environment:
       - CASSANDRA_NODES=cassandra
       - ADMIN_TOKEN
-  cassandra:
-    image: cassandra:3.0.12
-    ports:
-      - 9042:9042
+    volumes:
+      - "hawkular_data:/var/opt/hawkular"
+  prometheus:
+    image: prom/prometheus:v2.0.0
     environment:
       - CASSANDRA_START_RPC=true
       - MAX_HEAP_SIZE=128M
       - HEAP_NEWSIZE=24M
+    command: --config.file=/prometheus.yml
+    volumes:
+      - "hawkular_data:/var/hawkular"
+      - "./prometheus.yml:/prometheus.yml"
+    network_mode: service:hawkular
+volumes:
+  hawkular_data:
