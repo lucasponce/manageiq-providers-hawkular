@@ -96,7 +96,7 @@ module ManageIQ::Providers
       when *MW_DATASOURCE then
         generate_mw_generic_threshold_conditions(options, mw_datasource_metrics_by_column[eval_method])
       when *MW_MESSAGING then
-        generate_mw_generic_threshold_conditions(options, mw_messaging_topic_metrics_by_column[eval_method])
+        generate_mw_generic_threshold_conditions(options, mw_messaging_metrics_by_column[eval_method])
       when *MW_WEB_SESSIONS then
         generate_mw_generic_threshold_conditions(options, mw_server_metrics_by_column[eval_method])
       when *MW_TRANSACTIONS then
@@ -105,15 +105,21 @@ module ManageIQ::Providers
     end
 
     def mw_server_metrics_by_column
-      MiddlewareServer.live_metrics_config['middleware_server']['supported_metrics_by_column']
+      MiddlewareServer.live_metrics_config['supported_metrics']['default'].invert
     end
 
     def mw_datasource_metrics_by_column
-      MiddlewareDatasource.live_metrics_config['middleware_datasource']['supported_metrics_by_column']
+      MiddlewareDatasource.live_metrics_config['supported_metrics']['default'].invert
     end
 
-    def mw_messaging_topic_metrics_by_column
-      MiddlewareMessaging.live_metrics_config['middleware_messaging_jms_topic']['supported_metrics_by_column']
+    def mw_messaging_metrics_by_column
+      all = {}
+      supported_metrics = MiddlewareMessaging.live_metrics_config['supported_metrics']
+      supported_metrics.keys.each { |resource_type|
+        type_metrics = supported_metrics[resource_type]
+        all.merge!( supported_metrics[resource_type].invert ) if type_metrics
+      }
+      all
     end
 
     def generate_mw_gc_condition(options)
