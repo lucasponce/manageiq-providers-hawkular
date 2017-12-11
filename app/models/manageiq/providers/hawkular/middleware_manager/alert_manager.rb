@@ -115,10 +115,10 @@ module ManageIQ::Providers
     def mw_messaging_metrics_by_column
       all = {}
       supported_metrics = MiddlewareMessaging.live_metrics_config['supported_metrics']
-      supported_metrics.keys.each { |resource_type|
+      supported_metrics.each_key do |resource_type|
         type_metrics = supported_metrics[resource_type]
-        all.merge!( supported_metrics[resource_type].invert ) if type_metrics
-      }
+        all.merge!(type_metrics.invert) if type_metrics
+      end
       all
     end
 
