@@ -6,7 +6,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServers do
     Hawkular::Inventory::Resource.new(
       'id'     => 'os1',
       'feedId' => 'feed1',
-      'type'   => { 'id' => 'Platform_Operating System' },
+      'type'   => { 'id' => 'Platform Operating System WF10' },
       'config' => {
         'Container Id' => 'uuid_cont1',
         'Machine Id'   => nil
@@ -17,7 +17,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServers do
     Hawkular::Inventory::Resource.new(
       'id'     => 'javaagent1',
       'feedId' => 'feed1',
-      'type'   => { 'id' => 'Hawkular WildFly Agent' },
+      'type'   => { 'id' => 'Hawkular Java Agent WF10' },
       'config' => {
         'Immutable'    => 'false',
         'In Container' => 'true'
@@ -41,24 +41,27 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServers do
   end
   let(:eap_resource) do
     Hawkular::Inventory::Resource.new(
-      'id'         => 'server1',
-      'name'       => 'Server Number One',
-      'feedId'     => 'feed1',
-      'type'       => { 'id'         => 'WildFly Server',
-                        'properties' => {} },
-      'metrics'    => [{ 'name'       => 'Server Availability',
-                         'type'       => 'Server Availability',
-                         'properties' => {
-                           'hawkular-services.monitoring-type' => 'remote',
-                           'hawkular.metric.typeId'            => 'Server Availability~Server Availability',
-                           'hawkular.metric.type'              => 'AVAILABILITY',
-                           'hawkular.metric.id'                => 'server1_avail_metric'
-                         }}],
-      'properties' => {},
-      'config'     => eap_properties_hash
+      'id'      => 'server1',
+      'name'    => 'Server Number One',
+      'feedId'  => 'feed1',
+      'type'    => { 'id' => 'WildFly Server WF10' },
+      'config'  => eap_properties_hash,
+      'metrics' => [
+        {
+          'displayName' => 'Server Availability',
+          'family'      => 'wildfly_server_availability',
+          'unit'        => 'NONE',
+          'expression'  => 'wildfly_server_availability{feed_id=\"feed1\"}',
+          'labels'      => {
+            'feed_id' => 'feed1'
+          }
+        }
+      ]
     )
   end
-  let(:metric_data) { OpenStruct.new(:id => 'server1_avail_metric', :data => [{'timestamp' => 1, 'value' => 'arbitrary value'}]) }
+  let(:metric_data) do
+    { 'metric' => {'__name__' => 'wildfly_server_availability'}, 'value' => [123, 'arbitary value'] }
+  end
   let(:collector) do
     ManageIQ::Providers::Hawkular::Inventory::Collector::MiddlewareManager
       .new(ems_hawkular, ems_hawkular)
@@ -67,7 +70,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServers do
         allow(collector).to receive(:agents).and_return([agent_resource])
         allow(collector).to receive(:eaps).and_return([eap_resource])
         allow(collector).to receive(:raw_availability_data)
-          .with(%w(server1_avail_metric), hash_including(:order => 'DESC'))
+          .with(array_including(hash_including('displayName' => 'Server Availability')), any_args)
           .and_return([metric_data])
       end
   end
@@ -98,7 +101,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServers do
       :feed      => 'feed1',
       :hostname  => 'standalone',
       :product   => 'WildFly Full',
-      :type_path => 'WildFly Server'
+      :type_path => 'WildFly Server WF10'
     )
     expect(parsed_server.properties).to include(eap_properties_hash)
     expect(parsed_server.properties).to include('In Container' => 'true')
@@ -106,27 +109,29 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServers do
   end
 
   it 'assigns status reported by inventory to a server with "up" metric' do
-    metric_data.data.first['value'] = 'up'
+    metric_data['value'][1] = '1'
 
     parser.parse
-    expect(parsed_server.properties['Availability']).to eq('up')
+    expect(parsed_server.properties['Availability']).to eq('Running')
     expect(parsed_server.properties['Calculated Server State']).to eq(parsed_server.properties['Server State'])
   end
 
-  it 'assigns status reported by metric to a server when its availability metric is something else than "up"' do
+  it 'assigns STOPPED to a server when its availability metric is something else than "up"' do
+    metric_data['value'][1] = '0'
+
     parser.parse
-    expect(parsed_server.properties['Availability']).to eq('arbitrary value')
-    expect(parsed_server.properties['Calculated Server State']).to eq('arbitrary value')
+    expect(parsed_server.properties['Availability']).to eq('STOPPED')
+    expect(parsed_server.properties['Calculated Server State']).to eq('STOPPED')
   end
 
-  it 'assigns unknown status to a server with a missing metric' do
+  it 'assigns STOPPED to a server with a missing metric' do
     allow(collector).to receive(:raw_availability_data)
-      .with(%w(server1_avail_metric), hash_including(:order => 'DESC'))
+      .with(array_including(hash_including('displayName' => 'Deployment Status')), any_args)
       .and_return([])
 
     parser.parse
-    expect(parsed_server.properties['Availability']).to eq('unknown')
-    expect(parsed_server.properties['Calculated Server State']).to eq('unknown')
+    expect(parsed_server.properties['Availability']).to eq('STOPPED')
+    expect(parsed_server.properties['Calculated Server State']).to eq('STOPPED')
   end
 
   it 'associates the underlying container' do
