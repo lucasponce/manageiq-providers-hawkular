@@ -2,25 +2,28 @@ require_relative '../../middleware_manager/hawkular_helper'
 
 describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareDomains do
   let(:ems_hawkular) { ems_hawkular_fixture }
-  let(:metric_data) { OpenStruct.new(:id => 'host_master_avail', :data => [{'timestamp' => 1, 'value' => 'arbitrary value'}]) }
+  let(:metric_data) do
+    { 'metric' => {'__name__' => 'wildfly_domain_host_availability'}, 'value' => [123, 'arbitrary value'] }
+  end
   let(:controller_with_tree) do
     Hawkular::Inventory::Resource.new(
       'id'       => 'hc1',
       'feedId'   => 'feed1',
-      'name'     => 'Local DMR',
-      'type'     => {'id' => 'Host Controller'},
+      'name'     => 'Local',
+      'type'     => {'id' => 'Host Controller WF10'},
       'config'   => {
         'Version'         => '11.0.0.Final',
         'Local Host Name' => 'master',
         'Product Name'    => 'WildFly Full',
-        'Process Type'    => 'Domain Controller'
+        'Process Type'    => 'Host Controller WF10'
       },
       'children' => [
         {
           'id'       => 'host_master',
+          'parentId' => 'hc1',
           'feedId'   => 'feed1',
           'name'     => 'master',
-          'type'     => {'id' => 'Domain Host'},
+          'type'     => {'id' => 'Domain Host WF10'},
           'config'   => {
             'Suspend State'        => nil,
             'Running Mode'         => 'NORMAL',
@@ -34,13 +37,12 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareDomains do
           },
           'metrics'  => [
             {
-              'name'       => 'Domain Availability',
-              'type'       => 'Domain Availability',
-              'properties' => {
-                'hawkular-services.monitoring-type' => 'remote',
-                'hawkular.metric.typeId'            => 'Domain Availability~Domain Availability',
-                'hawkular.metric.type'              => 'AVAILABILITY',
-                'hawkular.metric.id'                => 'host_master_avail'
+              'displayName' => 'Domain Host Availability',
+              'family'      => 'wildfly_domain_host_availability',
+              'unit'        => 'NONE',
+              'expression'  => 'wildfly_domain_host_availability{feed_id=\"feed1\"}',
+              'labels'      => {
+                'feed_id' => 'feed1'
               }
             }
           ],
@@ -57,7 +59,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareDomains do
         allow(collector).to receive(:resource_tree).with('hc1').and_return(controller_with_tree)
         allow(collector).to receive(:domains).and_return([controller_with_tree.children.first])
         allow(collector).to receive(:raw_availability_data)
-          .with(%w(host_master_avail), hash_including(:order => 'DESC'))
+          .with(array_including(hash_including('displayName' => 'Domain Host Availability')), any_args)
           .and_return([metric_data])
       end
   end
@@ -83,7 +85,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareDomains do
     expect(parsed_domain_data).to include(
       :name       => 'master',
       :feed       => 'feed1',
-      :type_path  => 'Domain Host',
+      :type_path  => 'Domain Host WF10',
       :nativeid   => 'host_master',
       :ems_ref    => 'host_master',
       :properties => include(
@@ -97,35 +99,23 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareDomains do
     )
   end
 
-  it 'assigns enabled status to a domain with "up" metric' do
-    metric_data.data.first['value'] = 'up'
+  it 'assigns Running status to a domain with "up" metric' do
+    metric_data['value'][1] = '1'
 
     parser.parse
     expect(parsed_domain.properties).to include('Availability' => 'Running')
   end
 
-  it 'assigns disabled status to a domain with "down" metric' do
-    metric_data.data.first['value'] = 'down'
+  it 'assigns STOPPED status to a domain with "down" metric' do
+    metric_data['value'][1] = '0'
 
     parser.parse
-    expect(parsed_domain.properties).to include('Availability' => 'Stopped')
+    expect(parsed_domain.properties).to include('Availability' => 'STOPPED')
   end
 
-  it 'assigns disabled status to a domain with "down" metric' do
-    metric_data.data.first['value'] = 'down'
-
-    parser.parse
-    expect(parsed_domain.properties).to include('Availability' => 'Stopped')
-  end
-
-  it 'assigns unknown status to a domain whose metric is something else than "up" or "down"' do
-    parser.parse
-    expect(parsed_domain.properties).to include('Availability' => 'Unknown')
-  end
-
-  it 'assigns unknown status to a domain with a missing metric' do
+  it 'assigns Unknown status to a domain with a missing metric' do
     allow(collector).to receive(:raw_availability_data)
-      .with(%w(host_master_avail), hash_including(:order => 'DESC'))
+      .with(array_including(hash_including('displayName' => 'Domain Host Availability')), any_args)
       .and_return([])
 
     parser.parse

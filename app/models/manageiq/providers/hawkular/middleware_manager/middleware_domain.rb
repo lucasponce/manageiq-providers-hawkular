@@ -1,6 +1,6 @@
 module ManageIQ::Providers
   class Hawkular::MiddlewareManager::MiddlewareDomain < MiddlewareDomain
-    AVAIL_TYPE_ID = 'Domain Availability'.freeze
+    AVAIL_TYPE_ID = 'Domain Host Availability'.freeze
 
     def properties
       self.properties = super || {}

@@ -86,7 +86,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServerEntit
 
   describe 'deployments parser' do
     let(:metric_data) do
-      { 'metric' => {'__name__' => 'wildfly_deployment_availability'}, 'value' => [123, 'arbitary value'] }
+      { 'metric' => {'__name__' => 'wildfly_deployment_availability'}, 'value' => [123, 'arbitrary value'] }
     end
     let(:eap_children_hash) do
       {
