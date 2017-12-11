@@ -6,7 +6,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServerEntit
     Hawkular::Inventory::Resource.new(
       'id'       => 'server1',
       'feedId'   => 'feed1',
-      'type'     => {'id' => 'WildFly Server'},
+      'type'     => {'id' => 'WildFly Server WF10'},
       'config'   => {
         'Suspend State'  => 'RUNNING',
         'Bound Address'  => '127.0.0.1',
@@ -50,7 +50,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServerEntit
         'id'       => 'ds1',
         'name'     => 'Datasource 1',
         'feedId'   => 'feed1',
-        'type'     => {'id' => 'Datasource'},
+        'type'     => {'id' => 'Datasource WF10'},
         'parentId' => 'server1',
         'config'   => {
           'Connection Properties' => nil,
@@ -85,25 +85,27 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServerEntit
   end
 
   describe 'deployments parser' do
-    let(:metric_data) { OpenStruct.new(:id => 'deploy1', :data => [{'timestamp' => 1, 'value' => 'arbitrary value'}]) }
+    let(:metric_data) do
+      { 'metric' => {'__name__' => 'wildfly_deployment_availability'}, 'value' => [123, 'arbitary value'] }
+    end
     let(:eap_children_hash) do
       {
         'id'       => 'deploy1',
         'name'     => 'dp1.ear',
         'feedId'   => 'feed1',
-        'type'     => {'id' => 'Deployment'},
+        'type'     => {'id' => 'Deployment WF10'},
         'parentId' => 'server1',
         'config'   => {},
         'children' => [],
         'metrics'  => [
           {
-            'name'       => 'Deployment Status',
-            'type'       => 'Deployment Status',
-            'properties' => {
-              'hawkular-services.monitoring-type' => 'remote',
-              'hawkular.metric.typeId'            => 'Deployment Status~Deployment Status',
-              'hawkular.metric.type'              => 'AVAILABILITY',
-              'hawkular.metric.id'                => 'deploy1'
+            'displayName' => 'Deployment Status',
+            'family'      => 'wildfly_deployment_availability',
+            'unit'        => 'NONE',
+            'expression'  => 'wildfly_deployment_availability{feed_id=\"feed1\",deployment=\"dp1.ear\"}',
+            'labels'      => {
+              'feed_id'    => 'feed1',
+              'deployment' => 'dp1.ear'
             }
           }
         ]
@@ -113,7 +115,7 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServerEntit
     before do
       allow(collector).to receive(:deployments).and_return(eap_with_tree.children)
       allow(collector).to receive(:raw_availability_data)
-        .with(%w(deploy1), hash_including(:order => 'DESC'))
+        .with(array_including(hash_including('displayName' => 'Deployment Status')), any_args)
         .and_return([metric_data])
     end
 
@@ -137,27 +139,22 @@ describe ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServerEntit
     end
 
     it 'assigns enabled status to a deployment with "up" metric' do
-      metric_data.data.first['value'] = 'up'
+      metric_data['value'][1] = '1'
 
       parser.parse
       expect(parsed_deployment.status).to eq('Enabled')
     end
 
     it 'assigns disabled status to a deployment with "down" metric' do
-      metric_data.data.first['value'] = 'down'
+      metric_data['value'][1] = '0'
 
       parser.parse
       expect(parsed_deployment.status).to eq('Disabled')
     end
 
-    it 'assigns unknown status to a deployment whose metric is something else than "up" or "down"' do
-      parser.parse
-      expect(parsed_deployment.status).to eq('Unknown')
-    end
-
     it 'assigns unknown status to a deployment with a missing metric' do
       allow(collector).to receive(:raw_availability_data)
-        .with(%w(deploy1), hash_including(:order => 'DESC'))
+        .with(array_including(hash_including('displayName' => 'Deployment Status')), any_args)
         .and_return([])
 
       parser.parse
