@@ -24,11 +24,11 @@ module ManageIQ
               end
             end
 
-            def specific_operation(name, action_name, default_params = {})
+            def specific_operation(name, action_name, default_params = {}, extra_data = {})
               define_method(name) do |ref, feed_id, params = {}|
                 params[:resourceId] = ref.to_s
                 params[:feedId] = feed_id
-                run_operation(default_params.merge(params), action_name)
+                run_operation(default_params.merge(params), action_name, extra_data)
               end
             end
           end
@@ -259,10 +259,10 @@ module ManageIQ
           def run_operation(parameters, operation_name = nil, extra_data = {})
             with_provider_connection do |connection|
               notification_args = NotificationArgs.success(
-                extra_data[:original_operation] || parameters[:operationName],
+                extra_data[:original_operation] || parameters[:operationName] || operation_name.try(:titleize),
                 nil,
                 extra_data[:original_resource_id] || parameters[:resourceId],
-                MiddlewareServer
+                extra_data[:original_klass] || MiddlewareServer
               )
               if extra_data.key?(:server_in_domain)
                 # Operations on domain servers are run on the server-config resource
