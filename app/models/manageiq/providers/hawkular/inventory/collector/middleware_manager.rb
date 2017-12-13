@@ -8,6 +8,10 @@ module ManageIQ::Providers
       @connection ||= manager.connect
     end
 
+    def resource(resource_id)
+      connection.inventory.resource(resource_id)
+    end
+
     def resource_tree(resource_id)
       connection.inventory.resource_tree(resource_id)
     end

@@ -1,8 +1,10 @@
 class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
-  def initialize(ems)
+
+  def initialize(ems, collector)
     @ems               = ems
     @alerts_client     = ems.alerts_client
-    @inventory_client  = ems.inventory_client
+    @collector         = collector
+    @collector         ||= ManageIQ::Providers::Hawkular::Inventory::Collector::MiddlewareManager.new(@ems, nil)
     @collecting_events = false
   end
 
@@ -45,26 +47,26 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
   end
 
   def fetch_availabilities
-    collector = ManageIQ::Providers::Hawkular::Inventory::Collector::MiddlewareManager.new(@ems, nil)
-    fetch_server_availabilities(collector) +
-      fetch_deployment_availabilities(collector) +
-      fetch_domain_availabilities(collector)
+    fetch_server_availabilities +
+      fetch_deployment_availabilities +
+      fetch_domain_availabilities
   end
 
-  def fetch_server_availabilities(collector)
+  def fetch_server_availabilities
     parser = ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServers.new
-    parser.collector = collector
+    parser.collector = @collector
 
     # For servers, it's also needed to refresh server states from inventory.
     $mw_log.debug("#{log_prefix} Retrieving server states from Hawkular inventory")
     server_states = {}
     @ems.middleware_servers.reload.each do |server|
-      inventoried_server = @inventory_client.resource(server.ems_ref)
+      inventoried_server = @collector.resource(server.ems_ref)
       server_states[server.id] = inventoried_server.try(:config).try(:[], 'Server State') || ''
     end
 
     # Fetch availabilities and process them together with server state updates.
-    servers = parser.collector.eaps.concat(parser.collector.domain_servers)
+    servers = parser.collector.eaps
+    servers += parser.collector.domain_servers
     fetch_entities_availabilities(servers, parser, @ems.middleware_servers) do |item, avail|
       server_state = server_states[item.id]
       avail_data, calculated_status = parser.send(:process_server_availability, server_state, avail)
@@ -88,9 +90,9 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
     end
   end
 
-  def fetch_deployment_availabilities(collector)
+  def fetch_deployment_availabilities
     parser = ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareServerEntities.new
-    parser.collector = collector
+    parser.collector = @collector
 
     fetch_entities_availabilities(parser.collector.deployments, parser, @ems.middleware_deployments.reload) do |item, avail|
       status = parser.send(:process_deployment_availability, avail)
@@ -106,9 +108,9 @@ class ManageIQ::Providers::Hawkular::MiddlewareManager::EventCatcher::Stream
     end
   end
 
-  def fetch_domain_availabilities(collector)
+  def fetch_domain_availabilities
     parser = ManageIQ::Providers::Hawkular::Inventory::Parser::MiddlewareDomains.new
-    parser.collector = collector
+    parser.collector = @collector
 
     fetch_entities_availabilities(parser.collector.domains, parser, @ems.middleware_domains.reload) do |item, avail|
       status = parser.send(:process_domain_availability, avail)
